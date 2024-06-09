@@ -54,6 +54,10 @@ public class Project extends BaseEntity {
      */
     private String team;
     /**
+     * BP地址
+     */
+    private String bpUrl;
+    /**
      * 财务信息;单位(分)
      */
     private Integer finance;

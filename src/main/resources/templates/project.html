@@ -9,45 +9,45 @@
 </head>
 <body>
 
-   <div class="weui-form-preview" th:each="project:${projects}">
-       <div role="option" class="weui-form-preview__hd">
-           <label class="weui-form-preview__label"></label>
-           <em class="weui-form-preview__value" th:text="${project.getBriefName()}"></em>
-       </div>
-       <div role="option" aria-labelledby="p4 js_a11y_comma p5 js_a11y_comma p6" class="weui-form-preview__bd">
-           <div id="p1" class="weui-form-preview__item">
-               <label class="weui-form-preview__label">项目简介</label>
-               <span class="weui-form-preview__value" th:text="${project.getDesc()}"></span>
-           </div>
-           <div id="p2" class="weui-form-preview__item">
-               <label class="weui-form-preview__label">团队背景</label>
-               <span class="weui-form-preview__value" th:text="${project.getTeam()}"></span>
-           </div>
-           <div id="p3" class="weui-form-preview__item">
-               <label class="weui-form-preview__label">核心产品</label>
-               <span class="weui-form-preview__value" th:text="${project.getProduct()}"></span>
-           </div>
-       </div>
-       <div class="weui-form-preview__ft">
-           <a role="button" class="weui-form-preview__btn weui-form-preview__btn_default" th:href="|javascript:getBP(${project.getId()})|">要BP</a>
-           <a role="button" class="weui-form-preview__btn weui-form-preview__btn_primary" href="javascript:">约聊</a>
-       </div>
-   </div>
-
-    <script>
-        function getBP(projectId) {
-            console.log("要BP,项目id:" + projectId);
-            //发送请求
-            fetch('/wx/getBP?projectId=' + projectId, {
-                method: 'GET'
-            })
+<div class="weui-form-preview" th:each="project:${projects}">
+    <div role="option" class="weui-form-preview__hd">
+        <label class="weui-form-preview__label">项目名称</label>
+        <em class="weui-form-preview__value" th:text="${project.getBriefName()}"></em>
+    </div>
+    <div role="option" aria-labelledby="p4 js_a11y_comma p5 js_a11y_comma p6" class="weui-form-preview__bd">
+        <div id="p1" class="weui-form-preview__item">
+            <label class="weui-form-preview__label">项目简介</label>
+            <span class="weui-form-preview__value" th:text="${project.getDesc()}"></span>
+        </div>
+        <div id="p2" class="weui-form-preview__item">
+            <label class="weui-form-preview__label">团队背景</label>
+            <span class="weui-form-preview__value" th:text="${project.getTeam()}"></span>
+        </div>
+        <div id="p3" class="weui-form-preview__item">
+            <label class="weui-form-preview__label">核心产品</label>
+            <span class="weui-form-preview__value" th:text="${project.getProduct()}"></span>
+        </div>
+    </div>
+    <div class="weui-form-preview__ft">
+        <a role="button" class="weui-form-preview__btn weui-form-preview__btn_default"
+           th:href="|javascript:getBP(${project.getId()})|">申请BP</a>
+        <a role="button" class="weui-form-preview__btn weui-form-preview__btn_primary" href="javascript:">约聊</a>
+    </div>
+</div>
+<script>
+    function getBP(projectId) {
+        console.log("要BP,项目id:" + projectId);
+        //发送请求
+        fetch('/wx/getBP?projectId=' + projectId, {
+            method: 'GET'
+        })
             .then(response => {
-                if(response.ok) {
-                    alert("BP已通过企业微信发送给您")
+                if (response.ok) {
+                    alert("您的BP申请已提交")
                 }
             })
             .catch(error => console.error('Error:', error));
-        }
-    </script>
+    }
+</script>
 </body>
 </html>
