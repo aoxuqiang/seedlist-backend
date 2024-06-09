@@ -4,7 +4,8 @@
 *.o
 *.pyc
 *.dll
-*.iml 
+*.iml
+.idea/
 # 忽略敏感信息
 *.key
 *.pem

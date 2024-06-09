@@ -11,14 +11,11 @@ import javax.persistence.Table;
 @Getter
 @Setter
 public class Investor extends BaseEntity {
+    private String wxUserId;
     /**
      * 投资机构id
      */
     private Integer orgId;
 
     private String name;
-
-    private String createdBy;
-
-    private String updatedBy;
 }

@@ -3,13 +3,13 @@ spring:
     name: seedlist #应用名称
   datasource:
     # 配置数据库
-    url: jdbc:mysql://101.34.244.190:3306/seedlist?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf8&useSSL=true
-    username: root #??????
-    password: 123456root #???????
-    #???????
-    driver-class-name: com.mysql.cj.jdbc.Driver #??MySQL??????
-    type: com.zaxxer.hikari.HikariDataSource #???????
-    #?????????
+#    url: jdbc:mysql://101.34.244.190:3306/seedlist?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf8&useSSL=true
+    url: jdbc:mysql://localhost:3306/seedlist?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf8&useSSL=true
+    username: root
+    password: '[m5i=00s3TYW'
+#    password: 123456root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    type: com.zaxxer.hikari.HikariDataSource
     hikari:
       connection-timeout: 30000 #客户端等待连接池连接的最大毫秒数
       minimum-idle: 4 #连接池中维护的最小空闲连接数
@@ -43,3 +43,5 @@ jwt:
 
 server:
   port: 8008 # 服务器端口
+logging:
+  config: classpath:logging-config.xml

@@ -1,5 +1,6 @@
-package com.example.seedlist.controller;
+package com.example.seedlist.controller.admin;
 
+import com.example.seedlist.controller.BaseController;
 import com.example.seedlist.converter.TagMapper;
 import com.example.seedlist.dto.Result;
 import com.example.seedlist.dto.TagDTO;

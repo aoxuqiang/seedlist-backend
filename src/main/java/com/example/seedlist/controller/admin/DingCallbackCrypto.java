@@ -1,4 +1,4 @@
-package com.example.seedlist.controller;
+package com.example.seedlist.controller.admin;
 
 import java.io.ByteArrayOutputStream;
 import java.nio.charset.Charset;

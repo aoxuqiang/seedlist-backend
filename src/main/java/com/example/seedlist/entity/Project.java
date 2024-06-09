@@ -25,10 +25,16 @@ public class Project extends BaseEntity {
     @Column(name = "project_no")
     private String projectNo;
     /**
-     * 项目名称
+     * 项目简称
      */
-    @Column(name = "project_name")
-    private String projectName;
+    @Column(name = "brief_name")
+    private String briefName;
+
+    /**
+     * 项目全称
+     */
+    @Column(name = "full_name")
+    private String fullName;
     /**
      * 公司
      */
@@ -42,7 +48,7 @@ public class Project extends BaseEntity {
     /**
      * 简述
      */
-    private String brief;
+    private String desc;
     /**
      * 团队信息
      */

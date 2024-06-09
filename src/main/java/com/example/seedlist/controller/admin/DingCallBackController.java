@@ -1,4 +1,4 @@
-package com.example.seedlist.controller;
+package com.example.seedlist.controller.admin;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;

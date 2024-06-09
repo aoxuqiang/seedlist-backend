@@ -10,5 +10,9 @@ public class InvestorService extends BaseService<InvestorRepository, Investor,In
     protected InvestorService(InvestorRepository repository) {
         super(repository);
     }
+
+    public Investor getByWx(String wxUserId) {
+        return getRepository().getByWxUserId(wxUserId);
+    }
 }
 
