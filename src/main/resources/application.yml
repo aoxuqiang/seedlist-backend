@@ -4,10 +4,10 @@ spring:
   datasource:
     # 配置数据库
 #    url: jdbc:mysql://localhost:3306/seedlist?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf8&useSSL=true
-    url: jdbc:mysql://localhost:3306/seedlist?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf8&useSSL=true
+    url: jdbc:mysql://101.34.244.190:3306/seedlist?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf8&useSSL=true
     username: root
-    password: '[m5i=00s3TYW'
-#    password: 123456root
+#    password: '[m5i=00s3TYW'
+    password: 123456root
     driver-class-name: com.mysql.cj.jdbc.Driver
     type: com.zaxxer.hikari.HikariDataSource
     hikari:
@@ -43,5 +43,7 @@ jwt:
 
 server:
   port: 8008 # 服务器端口
+  servlet:
+    context-path: /api
 logging:
   config: classpath:logging-config.xml

@@ -3,17 +3,20 @@ package com.example.seedlist.dto;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.List;
 
 @Data
 public class CompanyDTO implements Serializable {
 
     private Integer id;
 
-    private String fullName;
+    private String name;
 
-    private String shortName;
+    private Integer areaId;
 
     private String address;
 
-    private Integer type;
+    private List<Integer> values;
+
+    private String area;
 }

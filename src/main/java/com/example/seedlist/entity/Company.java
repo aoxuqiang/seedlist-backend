@@ -13,11 +13,13 @@ import javax.persistence.Table;
 @Setter
 public class Company extends BaseEntity {
 
-    private String fullName;
-
-    private String shortName;
-
+    private String name;
+    /**
+     * 地区Id
+     */
+    private Integer areaId;
+    /**
+     * 详细地址
+     */
     private String address;
-
-    private Integer type;
 }

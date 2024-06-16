@@ -12,12 +12,12 @@
 <div class="weui-form-preview" th:each="project:${projects}">
     <div role="option" class="weui-form-preview__hd">
         <label class="weui-form-preview__label">项目名称</label>
-        <em class="weui-form-preview__value" th:text="${project.getBriefName()}"></em>
+        <em class="weui-form-preview__value" th:text="${project.getName()}"></em>
     </div>
     <div role="option" aria-labelledby="p4 js_a11y_comma p5 js_a11y_comma p6" class="weui-form-preview__bd">
         <div id="p1" class="weui-form-preview__item">
             <label class="weui-form-preview__label">项目简介</label>
-            <span class="weui-form-preview__value" th:text="${project.getDesc()}"></span>
+            <span class="weui-form-preview__value" th:text="${project.getBrief()}"></span>
         </div>
         <div id="p2" class="weui-form-preview__item">
             <label class="weui-form-preview__label">团队背景</label>
@@ -38,7 +38,7 @@
     function getBP(projectId) {
         console.log("要BP,项目id:" + projectId);
         //发送请求
-        fetch('/wx/getBP?projectId=' + projectId, {
+        fetch('/api/wx/getBP?projectId=' + projectId, {
             method: 'GET'
         })
             .then(response => {

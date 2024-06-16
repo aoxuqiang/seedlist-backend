@@ -3,15 +3,7 @@ package com.example.seedlist.entity;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import java.util.List;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "tb_project")
@@ -22,25 +14,16 @@ public class Project extends BaseEntity {
     /**
      * 项目编号
      */
-    @Column(name = "project_no")
-    private String projectNo;
+    private String no;
     /**
      * 项目简称
      */
-    @Column(name = "brief_name")
-    private String briefName;
 
-    /**
-     * 项目全称
-     */
-    @Column(name = "full_name")
-    private String fullName;
+    private String name;
     /**
      * 公司
      */
-    @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name="company_id",referencedColumnName="id")
-    private Company company;
+    private Integer companyId;
     /**
      * 主打产品
      */
@@ -48,23 +31,34 @@ public class Project extends BaseEntity {
     /**
      * 简述
      */
-    private String desc;
+    private String brief;
     /**
-     * 团队信息
+     * 团队
      */
     private String team;
     /**
      * BP地址
      */
-    private String bpUrl;
+    private String bp;
     /**
      * 财务信息;单位(分)
      */
     private Integer finance;
     /**
-     * 备注
+     * 核心客户
      */
-    private String remark;
+    private String custom;
+
+
+    private String domain;
+
+
+    private String competitor;
+
+    /**
+     * 项目标签
+     */
+    private String tags;
 
     /**
      * 创建人
@@ -76,10 +70,4 @@ public class Project extends BaseEntity {
      */
     @Column(name = "updated_by")
     protected String updatedBy;
-
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "tb_project_tag",
-            joinColumns = @JoinColumn(name = "project_id"),
-            inverseJoinColumns = @JoinColumn(name = "tag_id"))
-    private List<Tag> tags;
 }

@@ -13,12 +13,5 @@ import javax.persistence.Table;
 @Setter
 public class Tag extends BaseEntity{
 
-    @Column(name = "name")
-    private String tagName;
-
-    @Column(name = "created_by")
-    private String createdBy;
-
-    @Column(name = "updated_by")
-    private String updatedBy;
+    private String name;
 }

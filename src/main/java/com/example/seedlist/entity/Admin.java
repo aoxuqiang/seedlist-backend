@@ -27,4 +27,9 @@ public class Admin extends BaseEntity {
      * 昵称
      */
     private String nickname;
+
+    /**
+     * 密钥
+     */
+    private String secretKey;
 }

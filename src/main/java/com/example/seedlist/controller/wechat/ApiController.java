@@ -81,9 +81,8 @@ public class ApiController {
         //记录行为日志
         if (CollectionUtil.isEmpty(eventService.queryUserEvent(userId, EventType.APPLY_BP.getCode()))) {
             Event event = new Event();
-            event.setUserid(userId);
+            event.setUserId(userId);
             event.setProjectId(projectId);
-            event.setEventTime(new Date());
             eventService.save(event);
         }
     }
@@ -94,14 +93,14 @@ public class ApiController {
         Event event = eventService.getById(eventId);
         Project project = projectService.getById(event.getProjectId());
         String content = String.format("%s的BP\n <a href=\"http://www.dealseedlist.com:8080/wx/scanBP?pid=%s\">请查收</a>",
-                project.getBriefName(), project.getId());
-        wechatService.sendMessage(Lists.newArrayList(event.getUserid()),content);
+                project.getName(), project.getId());
+        wechatService.sendMessage(Lists.newArrayList(event.getUserId()),content);
     }
 
     @GetMapping("/scanBP")
     public void scanBP(@RequestParam("pid") Integer pid) {
         Project project = projectService.getById(pid);
-        String bpUrl = project.getBpUrl();
+        String bpUrl = project.getBp();
         InputStream inputStream = null;
         HttpURLConnection httpURLConnection = null;
         try {

@@ -14,7 +14,7 @@ public class EventService extends BaseService<EventRepository, Event, Integer> {
     }
 
 
-    public List<Event> queryUserEvent(String userId, Integer eventId) {
-        return getRepository().queryAllByUseridAndEvent(userId, eventId);
+    public List<Event> queryUserEvent(String userId, Integer type) {
+        return getRepository().queryAllByUserIdAndType(userId, type);
     }
 }

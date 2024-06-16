@@ -37,4 +37,10 @@ public class TagController extends BaseController<TagService> {
         return success();
     }
 
+    @PostMapping("/del")
+    public Result delTag(@RequestParam("id") Integer id) {
+        getService().delById(id);
+        return success();
+    }
+
 }

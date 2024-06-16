@@ -9,6 +9,6 @@ public class TagDTO implements Serializable {
 
     private Integer id;
 
-    private String tagName;
+    private String name;
 }
 

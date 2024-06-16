@@ -10,11 +10,11 @@ public class ProjectDTO implements Serializable {
 
     private Integer id;
 
-    private String projectNo;
+    private String no;
 
-    private String projectName;
+    private String name;
 
-    private CompanyDTO company;
+    private Integer companyId;
 
     private String product;
 
@@ -22,7 +22,15 @@ public class ProjectDTO implements Serializable {
 
     private String team;
 
+    private String custom;
+
+    private String domain;
+
+    private String competitor;
+
     private Integer finance;
+
+    private String bp;
 
     private String remark;
 
@@ -30,5 +38,7 @@ public class ProjectDTO implements Serializable {
 
     private String updatedBy;
 
-    private List<TagDTO> tags;
+    private List<TagDTO> tagList;
+
+    private CompanyDTO company;
 }

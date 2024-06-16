@@ -6,21 +6,20 @@ import com.example.seedlist.dto.Result;
 import com.example.seedlist.entity.Admin;
 import com.example.seedlist.enums.ResultCode;
 import com.example.seedlist.service.AdminService;
+import com.example.seedlist.util.EncryptionUtil;
 import com.example.seedlist.util.JwtUtil;
 import com.google.common.collect.Lists;
 import io.jsonwebtoken.Claims;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 @RestController
+@RequestMapping("/admin")
 public class AdminController extends BaseController<AdminService> {
 
     @Resource
@@ -36,15 +35,17 @@ public class AdminController extends BaseController<AdminService> {
      * @param loginInfo 登录信息
      * @return result 结果
      */
-    @PostMapping("/admin/login")
-    public Result adminLogin(@RequestBody LoginInfo loginInfo) {
+    @PostMapping("/login")
+    public Result adminLogin(@RequestBody LoginInfo loginInfo) throws Exception{
         Optional<Admin> adminOptional = getService().getAdminByAccount(loginInfo.getUsername());
         if (!adminOptional.isPresent()) {
             return Result.fail(ResultCode.AUTH_FAIL);
         }
         Admin loginAdmin = adminOptional.get();
-        //TODO验证密码
-
+        String encryptPasswd = EncryptionUtil.encryptWithAES(loginInfo.getPassword(),loginAdmin.getSecretKey());
+        if (!Objects.equals(loginAdmin.getPassword(), encryptPasswd)) {
+            return Result.fail(ResultCode.AUTH_FAIL);
+        }
         //验证通过颁发token
         Map<String, String> map = new HashMap<>(1);
         map.put("token", jwtUtil.createJwt(String.valueOf(loginAdmin.getId()),
@@ -53,7 +54,7 @@ public class AdminController extends BaseController<AdminService> {
         return Result.success(map);
     }
 
-    @GetMapping("/admin/info")
+    @GetMapping("/info")
     public Result adminInfo(@RequestParam("token") String token) {
         Claims claims = jwtUtil.parseJwt(token);
         Admin admin = getService().getById(Integer.parseInt(claims.getId()));
