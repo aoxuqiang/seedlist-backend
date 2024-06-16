@@ -38,7 +38,7 @@
     function getBP(projectId) {
         console.log("要BP,项目id:" + projectId);
         //发送请求
-        fetch('/api/wx/getBP?projectId=' + projectId, {
+        fetch('/api/wx/applyBP?projectId=' + projectId, {
             method: 'GET'
         })
             .then(response => {

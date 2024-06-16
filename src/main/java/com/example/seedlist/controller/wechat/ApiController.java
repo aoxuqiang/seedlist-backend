@@ -52,10 +52,9 @@ public class ApiController {
                                     @RequestParam(value = "state",required = false) String state) {
 
         WxUser wxUser = wechatService.getWxUser(code);
-//        保存用户如果不存在的话
+        //保存用户如果不存在的话
         saveUserIfNotExist(wxUser);
         request.getSession().setAttribute("userId", wxUser.getUserid());
-        request.getSession().setAttribute("userId", "123456");
 
         //TODO 查询项目信息
         List<Project> projectList = projectService.getAll();
