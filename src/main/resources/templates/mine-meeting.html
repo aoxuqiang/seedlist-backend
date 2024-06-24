@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ch" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
+    <title>我的会议</title>
+    <!-- 引入 WeUI CDN 链接 -->
+    <link rel="stylesheet" href="https://res.wx.qq.com/open/libs/weui/2.3.0/weui.min.css"/>
+</head>
+<body>
+
+<div class="weui-form-preview">
+    <div class="weui-cells">
+        <a aria-labelledby="js_cell_tl1_tips js_cell_tl1_link" class="weui-cell weui-cell_access" th:href="">
+                <span class="weui-cell__bd" id="js_cell_tl1_tips" aria-hidden="true">
+                    <span>会议1</span>
+                </span>
+            <span class="weui-cell__ft" aria-hidden="true" id="js_cell_tl1_link">2024-04-24 12:00:00</span>
+        </a>
+        <a aria-labelledby="js_cell_tl2_tips js_cell_tl2_link" class="weui-cell  weui-cell_access" th:href="">
+                <span class="weui-cell__bd" aria-hidden="true" id="js_cell_tl2_tips">
+                    <span>cell standard</span>
+                </span>
+            <span class="weui-cell__ft" aria-hidden="true" id="js_cell_tl2_link">说明文字</span>
+        </a>
+    </div>
+</div>
+
+</body>
+</html>

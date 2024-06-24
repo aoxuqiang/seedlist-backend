@@ -13,4 +13,5 @@ public interface MeetingApplyRepository extends JpaRepository<MeetingApply, Inte
 
     List<MeetingApply> queryAllByMeetingId(Integer meetingId);
 
+    List<MeetingApply> queryAllByUidAndAuditStatus(Integer uid,Integer auditStatus);
 }

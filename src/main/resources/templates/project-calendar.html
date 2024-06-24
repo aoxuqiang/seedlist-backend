@@ -91,7 +91,7 @@
         computed: {
             getMeetingName() {
                 return (item) => {
-                    return item.name + "(" + item.startTime + ")"
+                    return item.name + "(" + item.startTime.split(" ")[1] + ")"
                 }
             },
             getUrl() {

@@ -4,7 +4,6 @@ import com.example.seedlist.dto.Result;
 import com.example.seedlist.entity.*;
 import com.example.seedlist.http.*;
 import com.example.seedlist.service.*;
-import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -16,10 +15,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Controller
@@ -85,7 +82,6 @@ public class ApiController {
 
     @RequestMapping("/projectDetail")
     public ModelAndView projectList(@RequestParam("id") Integer projectId) {
-        Integer uid = (Integer) request.getSession().getAttribute(KEY_USER);
         //查询项目信息
         Project project = projectService.getById(projectId);
         ModelAndView modelAndView = new ModelAndView();
@@ -109,6 +105,14 @@ public class ApiController {
         modelAndView.addObject("project", project);
         modelAndView.addObject("disabled", true);
         modelAndView.addObject("showText", "报名");
+        modelAndView.setViewName("project-meeting");
+        return modelAndView;
+    }
+
+    @RequestMapping("/mineMeeting")
+    public ModelAndView mineMeeting(@RequestParam("id") Integer meetingId) {
+        Integer uid = (Integer) request.getSession().getAttribute(KEY_USER);
+        ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("project-meeting");
         return modelAndView;
     }
