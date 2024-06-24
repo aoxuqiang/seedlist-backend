@@ -58,7 +58,7 @@
     </div>
     <div class="weui-form-preview__ft">
         <a role="button" class="weui-form-preview__btn weui-form-preview__btn_primary"
-           th:href="'javascript:applyMeeting(' + |${meeting.getId()}| +')'">报名</a>
+           th:href="'javascript:applyMeeting(' + |${meeting.getId()}| +')'" th:text="${showText}" th:disabled="${disabled}"></a>
     </div>
 </div>
 

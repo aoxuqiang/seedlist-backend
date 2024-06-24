@@ -107,6 +107,8 @@ public class ApiController {
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.addObject("meeting", meeting);
         modelAndView.addObject("project", project);
+        modelAndView.addObject("disabled", true);
+        modelAndView.addObject("showText", "报名");
         modelAndView.setViewName("project-meeting");
         return modelAndView;
     }

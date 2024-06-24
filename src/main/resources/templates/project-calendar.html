@@ -9,12 +9,16 @@
     <!-- 引入样式文件 -->
     <link
             rel="stylesheet"
-            href="https://fastly.jsdelivr.net/npm/vant@4/lib/index.css"
+            href="../static/vant.css"
     />
-
     <!-- 引入 Vue 和 Vant 的 JS 文件 -->
+    <script src="../static/vue@3.js"></script>
+    <script src="../static/vant.min.js"></script>
+    <!--
+    href="https://fastly.jsdelivr.net/npm/vant@4/lib/index.css"
     <script src="https://fastly.jsdelivr.net/npm/vue@3"></script>
     <script src="https://fastly.jsdelivr.net/npm/vant@4/lib/vant.min.js"></script>
+    -->
     <style>
 
     </style>
@@ -38,13 +42,14 @@
         <van-divider>今日会议</van-divider>
     </div>
     <div id="meetings">
-        <van-cell v-for="item in dateMeetings" :title="item.name" is-link icon="service-o" :url="getUrl(item.id)"/>
+        <van-cell v-for="item in dateMeetings" :title="getMeetingName(item)" is-link icon="service" :url="getUrl(item.id)"/>
     </div>
 </div>
 <script>
     const app = Vue.createApp({
         data() {
             return {
+                minDate:null,
                 show:true,
                 monthMeetings:[],
                 flag: false,
@@ -53,6 +58,7 @@
         },
         created() {
             let date = new Date()
+            this.minDate = new Date(date.getFullYear(),date.getMonth(),date.getDate());
             this.showMonth(date)
             this.selectDate(date)
         },
@@ -83,9 +89,10 @@
             }
         },
         computed: {
-            minDate() {
-               let date = new Date()
-               return new Date(date.getFullYear(),date.getMonth(),date.getDate())
+            getMeetingName() {
+                return (item) => {
+                    return item.name + "(" + item.startTime + ")"
+                }
             },
             getUrl() {
               return (id) => {
@@ -98,7 +105,8 @@
                         this.showMonth(day)
                     }
                     let date = day.date.getDate();
-                    if (this.monthMeetings.filter(item => new Date(item.startTime).getDate() === date).length > 0) {
+                    if ( day.date >= this.minDate &&
+                        this.monthMeetings.filter(item => new Date(item.startTime).getDate() === date).length > 0) {
                         day.bottomInfo = '●'
                     }
                     return day;
