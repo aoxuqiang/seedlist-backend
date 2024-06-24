@@ -1,5 +1,6 @@
 package com.example.seedlist.service;
 
+import cn.hutool.core.date.DateUtil;
 import com.example.seedlist.entity.Meeting;
 import com.example.seedlist.entity.MeetingApply;
 import com.example.seedlist.entity.MeetingInvite;
@@ -9,6 +10,7 @@ import com.example.seedlist.repository.MeetingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 
@@ -35,5 +37,9 @@ public class MeetingService extends BaseService<MeetingRepository, Meeting, Inte
 
     public List<MeetingApply> queryMeetingApplyList(Integer meetingId) {
         return meetingApplyRepository.queryAllByMeetingId(meetingId);
+    }
+
+    public List<Meeting> queryMonthMeetings(Date date) {
+        return getRepository().queryAllByStartTimeBetween(DateUtil.beginOfMonth(date), DateUtil.endOfMonth(date));
     }
 }

@@ -30,35 +30,75 @@
                 :poppable="false"
                 :show-confirm="false"
                 height="500"
+                @select="selectDate"
+                @panel-change="showMonth"
         />
     </div>
     <div>
-        <van-divider />
+        <van-divider>今日会议</van-divider>
     </div>
     <div id="meetings">
-        <van-cell title="交流扩展会      (12:00)" is-link icon="service-o"/>
+        <van-cell v-for="item in dateMeetings" :title="item.name" is-link icon="service-o" :url="getUrl(item.id)"/>
     </div>
 </div>
 <script>
     const app = Vue.createApp({
         data() {
             return {
-                showPrev: {
-                    disabled: true
-                },
-                minDate: new Date(new Date().getFullYear(), new Date().getMonth(), 20),
-                show:true
+                show:true,
+                monthMeetings:[],
+                flag: false,
+                dateMeetings:[]
             }
         },
+        created() {
+            let date = new Date()
+            this.showMonth(date)
+            this.selectDate(date)
+        },
         methods: {
-            onSelect(item) {
-                console.log(item)
+            selectDate(date) {
+                console.log("selectDate date===",date)
+                let day = date.getDate()
+                this.dateMeetings =  this.monthMeetings.filter(item => new Date(item.startTime).getDate() === day)
+            },
+            showMonth(data) {
+                this.flag = false
+                let date = data.date
+                if (date == null) {
+                    date = data
+                }
+                // fetch("/wx/getMonthMeetings?date="+ date)
+                //     .then(res => res.json())
+                //     .then(json => this.monthMeetings = json)
+                //     .catch(err => console.log(err))
+                this.monthMeetings = [
+                    {"id":1,"startTime":'2024-06-02 12:34:55',"name":"会议1"},
+                    {"id":2,"startTime":'2024-06-08 12:34:55', "name": "会议2"},
+                    {"id":3,"startTime":'2024-06-24 12:34:55', "name": "会议3"},
+                    {"id":4,"startTime":'2024-06-24 14:34:55', "name": "会议4"},
+                    {"id":5,"startTime":'2024-06-29 12:34:55', "name": "会议5"}
+                ]
+                this.flag = true
             }
         },
         computed: {
+            minDate() {
+               let date = new Date()
+               return new Date(date.getFullYear(),date.getMonth(),date.getDate())
+            },
+            getUrl() {
+              return (id) => {
+                  return "/wx/meeting?id=" + id
+              }
+            },
             formatter() {
                 return (day) => {
-                    if (day.date.getDate() >= new Date().getDate()) {
+                    if (!this.flag) {
+                        this.showMonth(day)
+                    }
+                    let date = day.date.getDate();
+                    if (this.monthMeetings.filter(item => new Date(item.startTime).getDate() === date).length > 0) {
                         day.bottomInfo = '●'
                     }
                     return day;

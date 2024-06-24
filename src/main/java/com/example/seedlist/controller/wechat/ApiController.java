@@ -17,6 +17,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -149,6 +150,11 @@ public class ApiController {
             meetingApplyService.save(applyRecord);
         }
         return Result.success();
+    }
+
+    @GetMapping("/getMonthMeetings")
+    public List<Meeting> getMonthMeetings(@RequestParam("date") Date date) {
+        return meetingService.queryMonthMeetings(date);
     }
 
     @GetMapping("/scanBP")
