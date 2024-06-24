@@ -7,18 +7,12 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "tb_event")
+@Table(name = "tb_bp_send")
 @Getter
 @Setter
-public class Event extends BaseEntity {
-
-    private String userId;
-
+public class BpSend extends BaseEntity{
 
     private Integer projectId;
 
-    /**
-     * @see com.example.seedlist.enums.EventType
-     */
-    private Integer type;
+    private Integer uid;
 }

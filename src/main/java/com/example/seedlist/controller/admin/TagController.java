@@ -1,9 +1,8 @@
 package com.example.seedlist.controller.admin;
 
 import com.example.seedlist.controller.BaseController;
-import com.example.seedlist.converter.TagMapper;
 import com.example.seedlist.dto.Result;
-import com.example.seedlist.dto.TagDTO;
+import com.example.seedlist.entity.Tag;
 import com.example.seedlist.service.TagService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,17 +22,17 @@ public class TagController extends BaseController<TagService> {
 
     @GetMapping("/list")
     public Result listTag() {
-        return success(TagMapper.MAPPER.toTagDTOList(getService().getAll()));
+        return success(getService().getAll());
     }
 
     @GetMapping("/detail")
     public Result getProjectDetail(@RequestParam(name = "id") int id) {
-        return success(TagMapper.MAPPER.toTagDTO(getService().getById(id)));
+        return success(getService().getById(id));
     }
 
     @PostMapping("/save")
-    public Result saveProject(@RequestBody TagDTO tagDTO) {
-        getService().save(TagMapper.MAPPER.toTag(tagDTO));
+    public Result saveProject(@RequestBody Tag tag) {
+        getService().save(tag);
         return success();
     }
 

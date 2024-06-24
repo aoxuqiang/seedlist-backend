@@ -6,16 +6,11 @@ import lombok.Setter;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
-@Table(name = "tb_investor")
+@Table(name = "tb_org")
 @Entity
 @Getter
 @Setter
-public class Investor extends BaseEntity {
-    private String wxUserId;
-    /**
-     * 投资机构id
-     */
-    private Integer orgId;
+public class Org extends BaseEntity {
 
     private String name;
 }

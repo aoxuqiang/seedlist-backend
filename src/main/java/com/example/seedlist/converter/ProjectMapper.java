@@ -1,6 +1,7 @@
 package com.example.seedlist.converter;
 
-import com.example.seedlist.dto.ProjectDTO;
+import com.example.seedlist.dto.ProjectBriefDTO;
+import com.example.seedlist.dto.ProjectDetailDTO;
 import com.example.seedlist.entity.Project;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
@@ -12,10 +13,14 @@ public interface ProjectMapper {
 
     ProjectMapper MAPPER = Mappers.getMapper( ProjectMapper.class );
 
-    ProjectDTO toProjectDTO(Project project);
+    ProjectDetailDTO toProjectDTO(Project project);
+
+    ProjectBriefDTO toProjectBrief(Project project);
+
+    List<ProjectBriefDTO> toProjectBriefList(List<Project> projectList);
 
 
-    List<ProjectDTO> toProjectDTOList(List<Project> projectList);
+    List<ProjectDetailDTO> toProjectDTOList(List<Project> projectList);
 
-    Project  toProject(ProjectDTO projectDTO);
+    Project  toProject(ProjectDetailDTO projectDTO);
 }

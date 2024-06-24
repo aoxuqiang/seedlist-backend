@@ -10,15 +10,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 @FeignClient(name = "wxRequest",url = WxRequest.BASE_URL)
 public interface WxRequest {
 
-    public static final String BASE_URL = "https://qyapi.weixin.qq.com/cgi-bin";
-
+    String BASE_URL = "https://qyapi.weixin.qq.com/cgi-bin";
 
     @GetMapping("/gettoken")
     WxToken getToken(@RequestParam("corpid")String corpId,@RequestParam("corpsecret")String corpSecret);
 
     @GetMapping("/auth/getuserinfo")
-    WxUser getUserInfo(@RequestParam("access_token")String accessToken,@RequestParam("code")String code);
+    WxUser getUser(@RequestParam("access_token")String accessToken,@RequestParam("code")String code);
 
     @PostMapping(value = "/message/send",consumes = "application/json")
     WxSendMsg sendMessage(@RequestParam("access_token")String accessToken, @RequestBody WxMessage wxMessage);
+
+    @GetMapping("/user/get")
+    WxUser getUserInfo(@RequestParam("access_token")String accessToken,@RequestParam("userid")String userId);
 }

@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>路演日历</title>
+    <!-- 引入样式文件 -->
+    <link
+            rel="stylesheet"
+            href="https://fastly.jsdelivr.net/npm/vant@4/lib/index.css"
+    />
+
+    <!-- 引入 Vue 和 Vant 的 JS 文件 -->
+    <script src="https://fastly.jsdelivr.net/npm/vue@3"></script>
+    <script src="https://fastly.jsdelivr.net/npm/vant@4/lib/vant.min.js"></script>
+    <style>
+
+    </style>
+</head>
+<body>
+<div id="app">
+    <div id="meeting-cale">
+        <van-calendar
+                title="路演日历"
+                switch-mode="month"
+                :min-date="minDate"
+                :formatter="formatter"
+                :poppable="false"
+                :show-confirm="false"
+                height="500"
+        />
+    </div>
+    <div>
+        <van-divider />
+    </div>
+    <div id="meetings">
+        <van-cell title="交流扩展会      (12:00)" is-link icon="service-o"/>
+    </div>
+</div>
+<script>
+    const app = Vue.createApp({
+        data() {
+            return {
+                showPrev: {
+                    disabled: true
+                },
+                minDate: new Date(new Date().getFullYear(), new Date().getMonth(), 20),
+                show:true
+            }
+        },
+        methods: {
+            onSelect(item) {
+                console.log(item)
+            }
+        },
+        computed: {
+            formatter() {
+                return (day) => {
+                    if (day.date.getDate() >= new Date().getDate()) {
+                        day.bottomInfo = '●'
+                    }
+                    return day;
+                };
+            }
+        }
+    })
+    // 通过 CDN 引入时不会自动注册 Lazyload 组件
+    // 可以通过下面的方式手动注册
+    app.use(vant.Lazyload);
+    app.use(vant.Calendar);
+    app.use(vant.Cell);
+    app.use(vant.Divider)
+    app.mount('#app');
+</script>
+</body>
+</html>

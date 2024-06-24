@@ -49,10 +49,14 @@ public class Project extends BaseEntity {
      */
     private String custom;
 
-
+    /**
+     * 应用领域
+     */
     private String domain;
 
-
+    /**
+     * 竞对公司
+     */
     private String competitor;
 
     /**
@@ -60,14 +64,6 @@ public class Project extends BaseEntity {
      */
     private String tags;
 
-    /**
-     * 创建人
-     */
-    @Column(name = "created_by")
-    private String createdBy;
-    /**
-     * 更新人
-     */
-    @Column(name = "updated_by")
-    protected String updatedBy;
+    @Column(name = "`show`")
+    private Integer show;
 }

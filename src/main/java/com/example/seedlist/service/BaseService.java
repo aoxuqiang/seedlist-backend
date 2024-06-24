@@ -1,5 +1,6 @@
 package com.example.seedlist.service;
 
+import cn.hutool.core.collection.CollectionUtil;
 import com.example.seedlist.entity.BaseEntity;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -27,8 +28,18 @@ public abstract class BaseService<R extends JpaRepository<T, D>, T extends BaseE
         return repository.findAll(Sort.by(Sort.Order.desc("id")));
     }
 
+    public List<T> findAllById(List<D> ids) {
+        return CollectionUtil.reverse(repository.findAllById(ids));
+    }
+
+
+
     public T save(T t) {
         return repository.save(t);
+    }
+
+    public List<T> saveAll(List<T> ts) {
+        return repository.saveAll(ts);
     }
 
     public void delById(D d){

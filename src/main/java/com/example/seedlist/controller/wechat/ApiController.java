@@ -1,10 +1,7 @@
 package com.example.seedlist.controller.wechat;
 
-import cn.hutool.core.collection.CollectionUtil;
-import com.example.seedlist.entity.Event;
-import com.example.seedlist.entity.Investor;
-import com.example.seedlist.entity.Project;
-import com.example.seedlist.enums.EventType;
+import com.example.seedlist.dto.Result;
+import com.example.seedlist.entity.*;
 import com.example.seedlist.http.*;
 import com.example.seedlist.service.*;
 import com.google.common.collect.Lists;
@@ -19,8 +16,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.Date;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Controller
@@ -36,64 +34,121 @@ public class ApiController {
     private ProjectService projectService;
 
     @Autowired
-    private InvestorService investorService;
+    private ProjectScanService projectScanService;
+
+    @Autowired
+    private BpApplyService bpApplyService;
+
+    @Autowired
+    private BpSendService bpSendService;
+
+    @Autowired
+    private CompanyService companyService;
+
+    @Autowired
+    private MeetingService meetingService;
+
+    @Autowired
+    private MeetingApplyService meetingApplyService;
+
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private TokenService tokenService;
 
     @Autowired
-    private EventService eventService;
+    private ProjectScanService eventService;
 
     @Autowired
     private WechatService wechatService;
 
+    private static final String KEY_USER = "UID";
+
     @RequestMapping("/projects")
-    public ModelAndView projectList(@RequestParam("code")String code,
-                                    @RequestParam(value = "state",required = false) String state) {
+    public ModelAndView projectList(@RequestParam("code") String code,
+                                    @RequestParam(value = "state", required = false) String state) {
 
         WxUser wxUser = wechatService.getWxUser(code);
         //保存用户如果不存在的话
         saveUserIfNotExist(wxUser);
-        request.getSession().setAttribute("userId", wxUser.getUserid());
+        request.getSession().setAttribute(KEY_USER, wxUser.getUserid());
 
-        //TODO 查询项目信息
+        //查询项目信息
         List<Project> projectList = projectService.getAll();
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.addObject("projects", projectList);
-        modelAndView.setViewName("project");
+        modelAndView.setViewName("project-list");
         return modelAndView;
     }
 
+    @RequestMapping("/projectDetail")
+    public ModelAndView projectList(@RequestParam("id") Integer projectId) {
+        Integer uid = (Integer) request.getSession().getAttribute(KEY_USER);
+        //查询项目信息
+        Project project = projectService.getById(projectId);
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.addObject("project", project);
+        modelAndView.setViewName("project-detail");
+        //记录用户浏览数据
+        ProjectScan scanRecord = new ProjectScan();
+        scanRecord.setProjectId(projectId);
+        scanRecord.setUid(scanRecord.getUid());
+        projectScanService.save(scanRecord);
+
+        return modelAndView;
+    }
+
+    @RequestMapping("/projectMeeting")
+    public ModelAndView projectMeeting(@RequestParam("id") Integer meetingId) {
+        Meeting meeting = meetingService.getById(meetingId);
+        Project project = projectService.getById(meeting.getProjectId());
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.addObject("meeting", meeting);
+        modelAndView.addObject("project", project);
+        modelAndView.setViewName("project-meeting");
+        return modelAndView;
+    }
+
+
     private void saveUserIfNotExist(WxUser wxUser) {
-        Investor investor = investorService.getByWx(wxUser.getUserid());
-        if (investor == null) {
-            investor = new Investor();
-            investor.setWxUserId(wxUser.getUserid());
-            investorService.save(investor);
+        User user = userService.getByWx(wxUser.getUserid());
+        if (user == null) {
+            WxUser userInfo = wechatService.getWxUserInfo(wxUser.getUserid());
+            user = new User();
+            user.setWxUserId(wxUser.getUserid());
+            user.setName(wxUser.getName());
+            user.setMobile(wxUser.getMobile());
+            user.setEmail(wxUser.getEmail());
+            userService.save(user);
         }
     }
 
     @GetMapping("/applyBP")
     @ResponseBody
-    public void getBP(@RequestParam("projectId") Integer projectId) {
-        String userId = (String) request.getSession().getAttribute("userId");
-        //记录行为日志
-        if (CollectionUtil.isEmpty(eventService.queryUserEvent(userId, EventType.APPLY_BP.getCode()))) {
-            Event event = new Event();
-            event.setUserId(userId);
-            event.setProjectId(projectId);
-            eventService.save(event);
-        }
+    public Result applyBP(@RequestParam("projectId") Integer projectId) {
+        Integer uid = (Integer) request.getSession().getAttribute(KEY_USER);
+        //记录申请记录
+        BpApply record = new BpApply();
+        record.setUid(uid);
+        record.setProjectId(projectId);
+        bpApplyService.save(record);
+        return Result.success();
     }
 
-    @GetMapping("/sendBP")
+    @GetMapping("/applyMeeting")
     @ResponseBody
-    public void sendBP(@RequestParam("eventId") Integer eventId) {
-        Event event = eventService.getById(eventId);
-        Project project = projectService.getById(event.getProjectId());
-        String content = String.format("%s的BP\n <a href=\"http://www.dealseedlist.com:8080/wx/scanBP?pid=%s\">请查收</a>",
-                project.getName(), project.getId());
-        wechatService.sendMessage(Lists.newArrayList(event.getUserId()),content);
+    public Result applyMeeting(@RequestParam("meetingId") Integer meetingId) {
+        Integer uid = (Integer) request.getSession().getAttribute(KEY_USER);
+        Meeting meeting = meetingService.getById(meetingId);
+        if (meetingApplyService.selectUserMeeting(meeting.getId(), uid) != null) {
+            MeetingApply applyRecord = new MeetingApply();
+            applyRecord.setMeetingId(meetingId);
+            applyRecord.setUid(uid);
+
+            meetingApplyService.save(applyRecord);
+        }
+        return Result.success();
     }
 
     @GetMapping("/scanBP")
@@ -115,7 +170,7 @@ public class ApiController {
             if (inputStream != null) {
                 byte[] buffer = new byte[1024];
                 int read = 0;
-                while (inputStream.read(buffer) != -1) {
+                while ((read = inputStream.read(buffer)) != -1) {
                     response.getOutputStream().write(buffer);
                     response.getOutputStream().flush();
                 }

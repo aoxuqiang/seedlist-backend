@@ -2,15 +2,15 @@ package com.example.seedlist.controller.admin;
 
 import com.example.seedlist.controller.BaseController;
 import com.example.seedlist.dto.Result;
-import com.example.seedlist.service.InvestorService;
+import com.example.seedlist.service.UserService;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@RequestMapping("/investor")
+@RequestMapping("/user")
 @RestController
-public class InvestorController extends BaseController<InvestorService> {
+public class UserController extends BaseController<UserService> {
 
-    protected InvestorController(InvestorService service) {
+    protected UserController(UserService service) {
         super(service);
     }
 

@@ -18,4 +18,10 @@ public class WxUser extends WxResponse{
     private String openid;
 
     private String external_userid;
+
+    private String name;
+
+    private String mobile;
+
+    private String email;
 }

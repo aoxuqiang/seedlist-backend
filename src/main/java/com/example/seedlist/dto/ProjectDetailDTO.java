@@ -1,12 +1,14 @@
 package com.example.seedlist.dto;
 
+import com.example.seedlist.entity.Company;
+import com.example.seedlist.entity.Tag;
 import lombok.Data;
 
 import java.io.Serializable;
 import java.util.List;
 
 @Data
-public class ProjectDTO implements Serializable {
+public class ProjectDetailDTO implements Serializable {
 
     private Integer id;
 
@@ -38,7 +40,7 @@ public class ProjectDTO implements Serializable {
 
     private String updatedBy;
 
-    private List<TagDTO> tagList;
+    private List<Tag> tagList;
 
-    private CompanyDTO company;
+    private Company company;
 }

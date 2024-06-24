@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ch" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
+    <title>项目上新</title>
+    <!-- 引入 WeUI CDN 链接 -->
+    <link rel="stylesheet" href="https://res.wx.qq.com/open/libs/weui/2.3.0/weui.min.css"/>
+    <style>
+        body {
+            background-color: #F5F5F6;
+        }
+    </style>
+</head>
+<body>
+<div class="page">
+    <div class="page__bd">
+        <div class="weui-form-preview" th:each="project:${projects}">
+            <div role="option" class="weui-form-preview__hd">
+                <label class="weui-form-preview__label">项目编号</label>
+                <em class="weui-form-preview__value" th:text="${project.getNo()}"></em>
+            </div>
+            <div role="option" aria-labelledby="p4 js_a11y_comma p5 js_a11y_comma p6" class="weui-form-preview__bd">
+                <div id="p1" class="weui-form-preview__item">
+                    <label class="weui-form-preview__label">项目简介</label>
+                    <span class="weui-form-preview__value" th:text="${project.getBrief()}"></span>
+                </div>
+                <div id="p2" class="weui-form-preview__item">
+                    <label class="weui-form-preview__label">团队背景</label>
+                    <span class="weui-form-preview__value" th:text="${project.getTeam()}"></span>
+                </div>
+                <div id="p3" class="weui-form-preview__item">
+                    <label class="weui-form-preview__label">核心产品</label>
+                    <span class="weui-form-preview__value" th:text="${project.getProduct()}"></span>
+                </div>
+            </div>
+            <div class="weui-form-preview__ft">
+                <a role="button" class="weui-form-preview__btn weui-form-preview__btn_primary"
+                   th:href="'/wx/projectDetail?id=' + ${project.getId()}">查看详情</a>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function showDetail(id) {
+        fetch("" + id);
+    }
+</script>
+</body>
+</html>
