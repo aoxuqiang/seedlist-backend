@@ -58,7 +58,7 @@
     </div>
     <div class="weui-form-preview__ft">
         <a role="button" class="weui-form-preview__btn weui-form-preview__btn_primary"
-           th:href="'javascript:applyMeeting(' + |${meeting.getId()}| +')'" th:text="${showText}" th:disabled="${disabled}"></a>
+           th:href="'javascript:applyMeeting(' + |${meeting.getId()}| +')'" th:text="${showText}" disabled></a>
     </div>
 </div>
 
@@ -68,7 +68,7 @@
     <div class="weui-dialog">
         <div class="weui-dialog__bd">您的报名已提交，请等待审核</div>
         <div class="weui-dialog__ft">
-            <a role="button" href="javascript:" onclick="changeBPDialog(0)"
+            <a role="button" href="javascript:" onclick="changeDialog(0)"
                class="weui-dialog__btn weui-dialog__btn_primary">确定</a>
         </div>
     </div>
@@ -92,7 +92,7 @@
         })
             .then(response => {
                 if (response.ok) {
-                    changeBPDialog(1);
+                    changeDialog(1);
                 }
             })
             .catch(error => console.error('Error:', error));

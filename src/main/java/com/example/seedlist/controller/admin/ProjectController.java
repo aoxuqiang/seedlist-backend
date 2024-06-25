@@ -9,6 +9,8 @@ import com.example.seedlist.entity.*;
 import com.example.seedlist.service.*;
 import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -44,12 +46,14 @@ public class ProjectController extends BaseController<ProjectService> {
     }
 
     @GetMapping("/list")
+    @Cacheable("listProject")
     public Result listProject() {
         List<Project> projectList = getService().getAll();
         return success(ProjectMapper.MAPPER.toProjectBriefList(projectList));
     }
 
     @GetMapping("/detail")
+    @Cacheable(value = "projectDetail", key = "#id")
     public Result getProjectDetail(@RequestParam(name = "id") int id) {
         Project project = getService().getById(id);
         ProjectDetailDTO projectDTO = ProjectMapper.MAPPER.toProjectDTO(project);
@@ -64,6 +68,7 @@ public class ProjectController extends BaseController<ProjectService> {
     }
 
     @PostMapping("/save")
+    @CacheEvict(value ={"listProject","projectDetail"}, key = "#projectDTO.id")
     public Result saveProject(@RequestBody ProjectDetailDTO projectDTO) {
         Project project = ProjectMapper.MAPPER.toProject(projectDTO);
         if (CollectionUtil.isNotEmpty(projectDTO.getTagList())) {
@@ -88,12 +93,14 @@ public class ProjectController extends BaseController<ProjectService> {
 
 
     @PostMapping("/del")
+    @CacheEvict(value ={"listProject","projectDetail"})
     public Result saveProject(@RequestParam("id") Integer id) {
         getService().delById(id);
         return success();
     }
 
     @PostMapping("/updateShow")
+    @CacheEvict(value ={"listProject","projectDetail"})
     public Result updateShow(@RequestParam("id") Integer id,
                              @RequestParam("show") Integer show) {
         Project project = getService().getById(id);
@@ -108,7 +115,7 @@ public class ProjectController extends BaseController<ProjectService> {
         BpApply bpApply = bpApplyService.getById(applyId);
         Project project = getService().getById(bpApply.getProjectId());
         User investor = userService.getById(bpApply.getUid());
-        String content = String.format("这是项目【%s】的BP\n <a href=\"http://www.dealseedlist.com:8080/api/wx/scanBP?pid=%s\">请查收</a>",
+        String content = String.format("这是项目【%s】的BP\n <a href=\"http://www.dealseedlist.com:8080/wx/scanBP?pid=%s\">请查收</a>",
                 project.getName(), project.getId());
         wechatService.sendMessage(Lists.newArrayList(investor.getWxUserId()), content);
         //记录发送记录

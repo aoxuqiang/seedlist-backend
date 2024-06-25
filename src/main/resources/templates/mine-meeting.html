@@ -10,13 +10,24 @@
 <body>
 
 <div class="weui-form-preview">
-    <div class="weui-cells" th:each="meeting:${meetings}">
+    <div class="weui-cells__title">待参加会议</div>
+    <div class="weui-cells" th:each="meeting:${toJoinMeetings}">
         <a aria-labelledby="js_cell_tl1_tips js_cell_tl1_link" class="weui-cell weui-cell_access" th:href="${meeting.getLink()}">
                 <span class="weui-cell__bd" id="js_cell_tl1_tips" aria-hidden="true">
                     <span th:text="${meeting.getName()}"></span>
                 </span>
             <span class="weui-cell__ft" aria-hidden="true" id="js_cell_tl1_link" th:text="${meeting.getStartTime()}"></span>
         </a>
+    </div>
+
+    <div class="weui-cells__title">已参加会议</div>
+    <div class="weui-cells" th:each="joinedMeeting:${joinedMeetings}">
+        <div role="option" class="weui-cell  weui-cell_example">
+            <div class="weui-cell__bd">
+                <p th:text="${joinedMeeting.getName()}"></p>
+            </div>
+            <div class="weui-cell__ft" th:text="${joinedMeeting.getStartTime()}"></div>
+        </div>
     </div>
 </div>
 

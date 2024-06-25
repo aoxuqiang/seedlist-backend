@@ -1,5 +1,7 @@
 package com.example.seedlist.controller.wechat;
 
+import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.core.util.StrUtil;
 import com.example.seedlist.dto.Result;
 import com.example.seedlist.entity.BpApply;
@@ -10,15 +12,13 @@ import com.example.seedlist.entity.ProjectScan;
 import com.example.seedlist.entity.User;
 import com.example.seedlist.http.WxUser;
 import com.example.seedlist.service.BpApplyService;
-import com.example.seedlist.service.BpSendService;
-import com.example.seedlist.service.CompanyService;
 import com.example.seedlist.service.MeetingApplyService;
 import com.example.seedlist.service.MeetingService;
 import com.example.seedlist.service.ProjectScanService;
 import com.example.seedlist.service.ProjectService;
-import com.example.seedlist.service.TokenService;
 import com.example.seedlist.service.UserService;
 import com.example.seedlist.service.WechatService;
+import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -73,9 +73,11 @@ public class ApiController {
 
     private void checkUser(String code) {
         WxUser wxUser = wechatService.getWxUser(code);
+        if (CharSequenceUtil.isBlank(wxUser.getUserid())) {
+            return;
+        }
         //保存用户如果不存在的话
         saveUserIfNotExist(wxUser);
-        request.getSession().setAttribute(KEY_USER, wxUser.getUserid());
     }
 
     @RequestMapping("/projects")
@@ -92,6 +94,7 @@ public class ApiController {
 
     @RequestMapping("/projectDetail")
     public ModelAndView projectList(@RequestParam("id") Integer projectId) {
+        Integer uid = (Integer) request.getSession().getAttribute(KEY_USER);
         //查询项目信息
         Project project = projectService.getById(projectId);
         ModelAndView modelAndView = new ModelAndView();
@@ -100,7 +103,7 @@ public class ApiController {
         //记录用户浏览数据
         ProjectScan scanRecord = new ProjectScan();
         scanRecord.setProjectId(projectId);
-        scanRecord.setUid(scanRecord.getUid());
+        scanRecord.setUid(uid);
         projectScanService.save(scanRecord);
 
         return modelAndView;
@@ -137,7 +140,8 @@ public class ApiController {
         List<Meeting> meetingList = meetingService.findAllById(
                 meetingApplies.stream().map(MeetingApply::getMeetingId).collect(Collectors.toList()));
         ModelAndView modelAndView = new ModelAndView();
-        modelAndView.addObject("meetings", meetingList);
+        modelAndView.addObject("toJoinMeetings", meetingList);
+        modelAndView.addObject("joinedMeetings", Lists.newArrayList());
         modelAndView.setViewName("mine-meeting");
         return modelAndView;
     }
@@ -154,6 +158,7 @@ public class ApiController {
             user.setEmail(userInfo.getEmail());
             userService.save(user);
         }
+        request.getSession().setAttribute(KEY_USER, user.getId());
     }
 
     @GetMapping("/applyBP")
@@ -173,18 +178,20 @@ public class ApiController {
     public Result applyMeeting(@RequestParam("meetingId") Integer meetingId) {
         Integer uid = (Integer) request.getSession().getAttribute(KEY_USER);
         Meeting meeting = meetingService.getById(meetingId);
-        if (meetingApplyService.selectUserMeeting(meeting.getId(), uid) != null) {
+        if (meetingApplyService.selectUserMeeting(meeting.getId(), uid) == null) {
             MeetingApply applyRecord = new MeetingApply();
             applyRecord.setMeetingId(meetingId);
             applyRecord.setUid(uid);
-
+            applyRecord.setAuditStatus(0);
             meetingApplyService.save(applyRecord);
         }
         return Result.success();
     }
 
     @GetMapping("/getMonthMeetings")
-    public List<Meeting> getMonthMeetings(@RequestParam("date") Date date) {
+    @ResponseBody
+    public List<Meeting> getMonthMeetings(@RequestParam("date") String dateStr) {
+        Date date = DateUtil.parse(dateStr).toJdkDate();
         return meetingService.queryMonthMeetings(date);
     }
 

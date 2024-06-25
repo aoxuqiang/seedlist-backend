@@ -46,7 +46,5 @@ jwt:
 
 server:
   port: 8008 # 服务器端口
-  servlet:
-    context-path:/
 logging:
   config: classpath:logging-config.xml

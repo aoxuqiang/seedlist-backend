@@ -10,6 +10,7 @@ import com.example.seedlist.util.EncryptionUtil;
 import com.example.seedlist.util.JwtUtil;
 import com.google.common.collect.Lists;
 import io.jsonwebtoken.Claims;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -55,6 +56,7 @@ public class AdminController extends BaseController<AdminService> {
     }
 
     @GetMapping("/info")
+    @Cacheable(value = "adminInfo",key = "#token")
     public Result adminInfo(@RequestParam("token") String token) {
         Claims claims = jwtUtil.parseJwt(token);
         Admin admin = getService().getById(Integer.parseInt(claims.getId()));

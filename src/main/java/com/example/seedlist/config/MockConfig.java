@@ -10,7 +10,7 @@ public class MockConfig {
 
     public WxUser getWxUser() {
         WxUser wxUser = new WxUser();
-        wxUser.setUserid("123456");
+        wxUser.setUserid("axq");
         wxUser.setName("axq");
         return wxUser;
     }

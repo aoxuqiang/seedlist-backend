@@ -6,12 +6,15 @@ import com.example.seedlist.dto.MeetingDTO;
 import com.example.seedlist.dto.Result;
 import com.example.seedlist.dto.UserMeetingDTO;
 import com.example.seedlist.entity.*;
+import com.example.seedlist.service.MeetingApplyService;
 import com.example.seedlist.service.MeetingService;
 import com.example.seedlist.service.ProjectService;
 import com.example.seedlist.service.UserService;
 import com.example.seedlist.service.WechatService;
 import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,6 +32,7 @@ public class MeetingController extends BaseController<MeetingService> {
     private UserService userService;
     @Autowired
     private WechatService wechatService;
+    private MeetingApplyService meetingApplyService;
 
 
     protected MeetingController(MeetingService service) {
@@ -36,6 +40,7 @@ public class MeetingController extends BaseController<MeetingService> {
     }
 
     @GetMapping("/list")
+    @Cacheable("meetingList")
     public Result meetingList() {
         List<Meeting> meetingList = getService().getAll();
         List<Integer> projectIds = meetingList.stream().map(Meeting::getProjectId).collect(Collectors.toList());
@@ -47,6 +52,7 @@ public class MeetingController extends BaseController<MeetingService> {
     }
 
     @GetMapping("/detail")
+    @Cacheable(value = "meetingDetail", key = "#id")
     public Result meetingDetail(@RequestParam("id") Integer id) {
         Meeting meeting = getService().getById(id);
         Project project = projectService.getById(meeting.getProjectId());
@@ -62,6 +68,7 @@ public class MeetingController extends BaseController<MeetingService> {
     }
 
     @PostMapping("/save")
+    @CacheEvict(value = {"meetingList","meetingDetail"})
     public Result saveMeeting(@RequestBody Meeting meeting) {
         getService().save(meeting);
         return success();
@@ -107,5 +114,21 @@ public class MeetingController extends BaseController<MeetingService> {
         List<UserMeetingDTO> result = MeetingMapper.MAPPER.toInviteList(meetingInvites);
         result.forEach(t -> t.setUname(map.get(t.getUid())));
         return success(result);
+    }
+
+    @PostMapping("/apply/pass")
+    public Result applyPass(@RequestParam("id") Integer id) {
+        MeetingApply apply = meetingApplyService.getById(id);
+        apply.setAuditStatus(1);
+        meetingApplyService.save(apply);
+        return success();
+    }
+
+    @PostMapping("/apply/refuse")
+    public Result applyRefuse(@RequestParam("id") Integer id) {
+        MeetingApply apply = meetingApplyService.getById(id);
+        apply.setAuditStatus(-1);
+        meetingApplyService.save(apply);
+        return success();
     }
 }

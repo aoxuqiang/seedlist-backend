@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en"  xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport"
@@ -9,11 +9,11 @@
     <!-- 引入样式文件 -->
     <link
             rel="stylesheet"
-            href="../static/vant.css"
+            th:href="@{/vant.css}"
     />
     <!-- 引入 Vue 和 Vant 的 JS 文件 -->
-    <script src="../static/vue@3.js"></script>
-    <script src="../static/vant.min.js"></script>
+    <script th:src="@{/vue3.js}"></script>
+    <script th:src="@{/vant.min.js}"></script>
     <!--
     href="https://fastly.jsdelivr.net/npm/vant@4/lib/index.css"
     <script src="https://fastly.jsdelivr.net/npm/vue@3"></script>
@@ -27,8 +27,8 @@
 <div id="app">
     <div id="meeting-cale">
         <van-calendar
-                title="路演日历"
                 switch-mode="month"
+                :show-title="false"
                 :min-date="minDate"
                 :formatter="formatter"
                 :poppable="false"
@@ -63,6 +63,20 @@
             this.selectDate(date)
         },
         methods: {
+            formate(date) {
+                var y = date.getFullYear();
+                var m = date.getMonth() + 1;
+                m = m < 10 ? ('0' + m) : m;
+                var d = date.getDate();
+                d = d < 10 ? ('0' + d) : d;
+                var h = date.getHours();
+                h=h < 10 ? ('0' + h) : h;
+                var minute = date.getMinutes();
+                minute = minute < 10 ? ('0' + minute) : minute;
+                var second=date.getSeconds();
+                second=second < 10 ? ('0' + second) : second;
+                return y + '-' + m + '-' + d+' '+h+':'+minute+':'+second;
+            },
             selectDate(date) {
                 console.log("selectDate date===",date)
                 let day = date.getDate()
@@ -74,7 +88,9 @@
                 if (date == null) {
                     date = data
                 }
-                fetch("/wx/getMonthMeetings?date="+ date)
+                this.dateMeetings = []
+                var formattedDate = this.formate(date)
+                fetch("/wx/getMonthMeetings?date="+ formattedDate)
                     .then(res => res.json())
                     .then(json => {
                         this.monthMeetings = json
@@ -96,9 +112,6 @@
             },
             formatter() {
                 return (day) => {
-                    if (!this.flag) {
-                        this.showMonth(day)
-                    }
                     let date = day.date.getDate();
                     if ( day.date >= this.minDate &&
                         this.monthMeetings.filter(item => new Date(item.startTime).getDate() === date).length > 0) {

@@ -12,6 +12,7 @@ import com.example.seedlist.service.*;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -57,6 +58,7 @@ public class CommonController {
      * @return
      */
     @GetMapping("/bpApply")
+    @Cacheable(value = "bpApply",key = "#projectId")
     public Result queryApply(@RequestParam("projectId") Integer projectId) {
         List<BpApply> bpApplyList = bpApplyService.queryByProject(projectId);
         List<User> userList = userService.findAllById(bpApplyList.stream().map(BpApply::getUid).collect(Collectors.toList()));
@@ -72,6 +74,7 @@ public class CommonController {
      * @return
      */
     @GetMapping("/bpSend")
+    @Cacheable(value = "bpSend", key = "#projectId")
     public Result querySend(@RequestParam("projectId") Integer projectId) {
         List<BpSend> bpSends = bpSendService.queryByProject(projectId);
         List<User> userList = userService.findAllById(bpSends.stream().map(BpSend::getUid).collect(Collectors.toList()));
@@ -87,6 +90,7 @@ public class CommonController {
      * @return
      */
     @GetMapping("/projectScan")
+    @Cacheable(value ="projectScan", key = "#projectId")
     public Result queryScan(@RequestParam("projectId") Integer projectId) {
         List<ProjectScan> projectScans = projectScanService.queryByProject(projectId);
         List<User> userList = userService.findAllById(projectScans.stream().map(ProjectScan::getUid).collect(Collectors.toList()));

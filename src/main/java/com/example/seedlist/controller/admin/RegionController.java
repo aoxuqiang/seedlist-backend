@@ -4,9 +4,8 @@ import com.example.seedlist.controller.BaseController;
 import com.example.seedlist.converter.RegionMapper;
 import com.example.seedlist.dto.RegionDTO;
 import com.example.seedlist.dto.Result;
-import com.example.seedlist.entity.Region;
 import com.example.seedlist.service.RegionService;
-import com.google.common.collect.Maps;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Comparator;
@@ -25,8 +24,8 @@ public class RegionController extends BaseController<RegionService> {
     }
 
     @GetMapping("/list")
-    public Result companyList() {
-        List<RegionDTO> regionDTOS = RegionMapper.MAPPER.toRegionList((getService().getAll()));
+    public Result regionList() {
+        List<RegionDTO> regionDTOS = RegionMapper.MAPPER.toRegionList((getService().getAllRegsion()));
         return success(treefy(regionDTOS));
     }
 
