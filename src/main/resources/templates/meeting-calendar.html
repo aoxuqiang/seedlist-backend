@@ -74,18 +74,13 @@
                 if (date == null) {
                     date = data
                 }
-                // fetch("/wx/getMonthMeetings?date="+ date)
-                //     .then(res => res.json())
-                //     .then(json => this.monthMeetings = json)
-                //     .catch(err => console.log(err))
-                this.monthMeetings = [
-                    {"id":1,"startTime":'2024-06-02 12:34:55',"name":"会议1"},
-                    {"id":2,"startTime":'2024-06-08 12:34:55', "name": "会议2"},
-                    {"id":3,"startTime":'2024-06-24 12:34:55', "name": "会议3"},
-                    {"id":4,"startTime":'2024-06-24 14:34:55', "name": "会议4"},
-                    {"id":5,"startTime":'2024-06-29 12:34:55', "name": "会议5"}
-                ]
-                this.flag = true
+                fetch("/wx/getMonthMeetings?date="+ date)
+                    .then(res => res.json())
+                    .then(json => {
+                        this.monthMeetings = json
+                        this.flag = true
+                    })
+                    .catch(err => console.log(err))
             }
         },
         computed: {
@@ -96,7 +91,7 @@
             },
             getUrl() {
               return (id) => {
-                  return "/wx/meeting?id=" + id
+                  return "/wx/projectMeeting?state=" + id
               }
             },
             formatter() {

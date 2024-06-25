@@ -1,19 +1,35 @@
 package com.example.seedlist.controller.wechat;
 
+import cn.hutool.core.util.StrUtil;
 import com.example.seedlist.dto.Result;
-import com.example.seedlist.entity.*;
-import com.example.seedlist.http.*;
-import com.example.seedlist.service.*;
+import com.example.seedlist.entity.BpApply;
+import com.example.seedlist.entity.Meeting;
+import com.example.seedlist.entity.MeetingApply;
+import com.example.seedlist.entity.Project;
+import com.example.seedlist.entity.ProjectScan;
+import com.example.seedlist.entity.User;
+import com.example.seedlist.http.WxUser;
+import com.example.seedlist.service.BpApplyService;
+import com.example.seedlist.service.BpSendService;
+import com.example.seedlist.service.CompanyService;
+import com.example.seedlist.service.MeetingApplyService;
+import com.example.seedlist.service.MeetingService;
+import com.example.seedlist.service.ProjectScanService;
+import com.example.seedlist.service.ProjectService;
+import com.example.seedlist.service.TokenService;
+import com.example.seedlist.service.UserService;
+import com.example.seedlist.service.WechatService;
 import lombok.extern.slf4j.Slf4j;
-import org.checkerframework.checker.units.qual.K;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -41,12 +57,6 @@ public class ApiController {
     private BpApplyService bpApplyService;
 
     @Autowired
-    private BpSendService bpSendService;
-
-    @Autowired
-    private CompanyService companyService;
-
-    @Autowired
     private MeetingService meetingService;
 
     @Autowired
@@ -56,30 +66,22 @@ public class ApiController {
     private UserService userService;
 
     @Autowired
-    private TokenService tokenService;
-
-    @Autowired
-    private ProjectScanService eventService;
-
-    @Autowired
     private WechatService wechatService;
 
     private static final String KEY_USER = "UID";
 
 
-    private boolean haveUserInfo() {
-        return request.getSession().getAttribute(KEY_USER) != null;
+    private void checkUser(String code) {
+        WxUser wxUser = wechatService.getWxUser(code);
+        //保存用户如果不存在的话
+        saveUserIfNotExist(wxUser);
+        request.getSession().setAttribute(KEY_USER, wxUser.getUserid());
     }
 
     @RequestMapping("/projects")
     public ModelAndView projectList(@RequestParam("code") String code,
                                     @RequestParam(value = "state", required = false) String state) {
-
-        WxUser wxUser = wechatService.getWxUser(code);
-        //保存用户如果不存在的话
-        saveUserIfNotExist(wxUser);
-        request.getSession().setAttribute(KEY_USER, wxUser.getUserid());
-
+        checkUser(code);
         //查询项目信息
         List<Project> projectList = projectService.getAll();
         ModelAndView modelAndView = new ModelAndView();
@@ -106,11 +108,9 @@ public class ApiController {
 
     @RequestMapping("/projectMeeting")
     public ModelAndView projectMeeting(@RequestParam(value = "code",required = false) String code,
-                                       @RequestParam("state") Integer meetingId) throws IOException {
-        if (!haveUserInfo()) {
-            String redirectUrl = String.format("https://open.weixin.qq.com/connect/oauth2/authorize?appid=wwd4b9f5c2a07ccc61&redirect_uri=http://www.dealseedlist.com:8080/wx/projectMeeting&response_type=code&state=%d&scope=snsapi_base&agentid=1000011#wechat_redirect",meetingId);
-            response.sendRedirect("");
-            return null;
+                                       @RequestParam("state") Integer meetingId) {
+        if (StrUtil.isNotBlank(code)) {
+            checkUser(code);
         }
         Meeting meeting = meetingService.getById(meetingId);
         Project project = projectService.getById(meeting.getProjectId());
@@ -123,8 +123,15 @@ public class ApiController {
         return modelAndView;
     }
 
+    @RequestMapping("/meeting/calendar")
+    public ModelAndView projectMeeting(@RequestParam(value = "code") String code) {
+        checkUser(code);
+        return new ModelAndView("meeting-calendar");
+    }
+
     @RequestMapping("/mineMeeting")
-    public ModelAndView mineMeeting() {
+    public ModelAndView mineMeeting(@RequestParam("code") String code) {
+        checkUser(code);
         Integer uid = (Integer) request.getSession().getAttribute(KEY_USER);
         List<MeetingApply> meetingApplies = meetingApplyService.selectByUser(uid);
         List<Meeting> meetingList = meetingService.findAllById(
@@ -142,9 +149,9 @@ public class ApiController {
             WxUser userInfo = wechatService.getWxUserInfo(wxUser.getUserid());
             user = new User();
             user.setWxUserId(wxUser.getUserid());
-            user.setName(wxUser.getName());
-            user.setMobile(wxUser.getMobile());
-            user.setEmail(wxUser.getEmail());
+            user.setName(userInfo.getName());
+            user.setMobile(userInfo.getMobile());
+            user.setEmail(userInfo.getEmail());
             userService.save(user);
         }
     }
@@ -154,10 +161,10 @@ public class ApiController {
     public Result applyBP(@RequestParam("projectId") Integer projectId) {
         Integer uid = (Integer) request.getSession().getAttribute(KEY_USER);
         //记录申请记录
-        BpApply record = new BpApply();
-        record.setUid(uid);
-        record.setProjectId(projectId);
-        bpApplyService.save(record);
+        BpApply applyRecord = new BpApply();
+        applyRecord.setUid(uid);
+        applyRecord.setProjectId(projectId);
+        bpApplyService.save(applyRecord);
         return Result.success();
     }
 
