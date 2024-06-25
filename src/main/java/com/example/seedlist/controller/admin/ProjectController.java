@@ -134,8 +134,9 @@ public class ProjectController extends BaseController<ProjectService> {
         List<Integer> uids = Arrays.stream(uidStr.split(",")).map(Integer::parseInt).collect(Collectors.toList());
         List<User> investorList = userService.queryByIds(uids);
         List<String> wxUserIdList = investorList.stream().map(User::getWxUserId).collect(Collectors.toList());
-        String content = String.format("这是项目【%s】的BP\n <a href=\"http://www.dealseedlist.com:8080/api/wx/scanBP?pid=%s\">请查收</a>",
-                project.getName(), project.getId());
+
+        String url = String.format("https://open.weixin.qq.com/connect/oauth2/authorize?appid=wwd4b9f5c2a07ccc61&redirect_uri=http://www.dealseedlist.com:8080/wx/scanBP&response_type=code&scope=snsapi_base&state=%s&agentid=1000011#wechat_redirect",project.getId());
+        String content = String.format("这是项目【%s】的BP </br></br> <a href='%s'>请查收</a>", project.getName(), url);
         wechatService.sendMessage(wxUserIdList, content);
         //记录发送BP记录
         List<BpSend> bpSendList = Lists.newArrayList();

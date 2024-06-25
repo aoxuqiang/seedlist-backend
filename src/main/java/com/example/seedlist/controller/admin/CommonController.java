@@ -1,5 +1,6 @@
 package com.example.seedlist.controller.admin;
 
+import cn.hutool.core.collection.CollectionUtil;
 import com.example.seedlist.converter.BpMapper;
 import com.example.seedlist.dto.BpRecordDTO;
 import com.example.seedlist.dto.Result;
@@ -65,6 +66,7 @@ public class CommonController {
         Map<Integer,String> map = userList.stream().collect(Collectors.toMap(User::getId, User::getName));
         List<BpRecordDTO> result = BpMapper.MAPPER.toApplyList(bpApplyList);
         result.forEach(t-> t.setUname(map.get(t.getUid())));
+        CollectionUtil.reverse(result);
         return Result.success(result);
     }
 
@@ -81,6 +83,7 @@ public class CommonController {
         Map<Integer,String> map = userList.stream().collect(Collectors.toMap(User::getId, User::getName));
         List<BpRecordDTO> result = BpMapper.MAPPER.toSendList(bpSends);
         result.forEach(t-> t.setUname(map.get(t.getUid())));
+        CollectionUtil.reverse(result);
         return  Result.success(result);
     }
 
@@ -97,6 +100,7 @@ public class CommonController {
         Map<Integer,String> map = userList.stream().collect(Collectors.toMap(User::getId, User::getName));
         List<BpRecordDTO> result = BpMapper.MAPPER.toScanList(projectScans);
         result.forEach(t-> t.setUname(map.get(t.getUid())));
+        CollectionUtil.reverse(result);
         return Result.success(result);
     }
 }

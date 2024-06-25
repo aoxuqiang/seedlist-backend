@@ -4,6 +4,8 @@ import com.example.seedlist.controller.BaseController;
 import com.example.seedlist.dto.Result;
 import com.example.seedlist.entity.Tag;
 import com.example.seedlist.service.TagService;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,6 +23,7 @@ public class TagController extends BaseController<TagService> {
     }
 
     @GetMapping("/list")
+    @Cacheable("allTag")
     public Result listTag() {
         return success(getService().getAll());
     }
@@ -31,12 +34,14 @@ public class TagController extends BaseController<TagService> {
     }
 
     @PostMapping("/save")
+    @CacheEvict(value = "allTag",allEntries = true)
     public Result saveProject(@RequestBody Tag tag) {
         getService().save(tag);
         return success();
     }
 
     @PostMapping("/del")
+    @CacheEvict(value = "allTag",allEntries = true)
     public Result delTag(@RequestParam("id") Integer id) {
         getService().delById(id);
         return success();

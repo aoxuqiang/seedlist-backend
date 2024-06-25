@@ -19,4 +19,13 @@ public class RegionService extends BaseService<RegionRepository, Region, Integer
         return getAll();
     }
 
+    @Cacheable(value = "rootRegion",key = "#areaId")
+    public Region getRoot(Integer areaId) {
+        Region region = getById(areaId);
+        while(region.getParentId() > 0) {
+            region = getById(region.getParentId());
+        }
+        return region;
+    }
+
 }

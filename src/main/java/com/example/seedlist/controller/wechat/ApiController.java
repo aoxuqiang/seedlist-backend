@@ -4,23 +4,16 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.core.util.StrUtil;
 import com.example.seedlist.dto.Result;
-import com.example.seedlist.entity.BpApply;
-import com.example.seedlist.entity.Meeting;
-import com.example.seedlist.entity.MeetingApply;
-import com.example.seedlist.entity.Project;
-import com.example.seedlist.entity.ProjectScan;
-import com.example.seedlist.entity.User;
+import com.example.seedlist.entity.*;
+import com.example.seedlist.enums.FinancingRound;
 import com.example.seedlist.http.WxUser;
-import com.example.seedlist.service.BpApplyService;
-import com.example.seedlist.service.MeetingApplyService;
-import com.example.seedlist.service.MeetingService;
-import com.example.seedlist.service.ProjectScanService;
-import com.example.seedlist.service.ProjectService;
-import com.example.seedlist.service.UserService;
-import com.example.seedlist.service.WechatService;
+import com.example.seedlist.service.*;
+import com.example.seedlist.vo.FinancingVO;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,9 +23,12 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -51,7 +47,16 @@ public class ApiController {
     private ProjectService projectService;
 
     @Autowired
+    private IndustryService industryService;
+
+    @Autowired
+    private TagService tagService;
+
+    @Autowired
     private ProjectScanService projectScanService;
+
+    @Autowired
+    private ChatApplyService chatApplyService;
 
     @Autowired
     private BpApplyService bpApplyService;
@@ -67,6 +72,15 @@ public class ApiController {
 
     @Autowired
     private WechatService wechatService;
+
+    @Autowired
+    private FinancingService financingService;
+
+    @Autowired
+    private CompanyService companyService;
+
+    @Autowired
+    private RegionService regionService;
 
     private static final String KEY_USER = "UID";
 
@@ -93,12 +107,32 @@ public class ApiController {
     }
 
     @RequestMapping("/projectDetail")
+    @CacheEvict(value = "projectScan", key = "#projectId")
     public ModelAndView projectList(@RequestParam("id") Integer projectId) {
         Integer uid = (Integer) request.getSession().getAttribute(KEY_USER);
         //查询项目信息
         Project project = projectService.getById(projectId);
+        //公司信息
+        Company company = companyService.getById(project.getCompanyId());
+        //行业信息
+        Industry industry = industryService.getById(project.getIndustryId());
+        //标签信息
+        List<Integer> tagIds = Arrays.stream(project.getTags().split(","))
+                .map(Integer::valueOf).collect(Collectors.toList());
+        List<Tag> tagList = tagService.findAllById(tagIds);
+        List<Financing> companyFinancing = financingService.getCompanyFinancing(project.getCompanyId());
+        companyFinancing = companyFinancing.stream().filter(t -> t.getState() == 0)
+                .sorted(Comparator.comparing(Financing::getTurn)).collect(Collectors.toList());
+        Financing current = companyFinancing.get(companyFinancing.size() - 1);
+        FinancingVO financingVO = new FinancingVO(current);
+        String tag = tagList.stream().map(Tag::getName).collect(Collectors.joining("、"));
+        Region region = regionService.getRoot(company.getAreaId());
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.addObject("project", project);
+        modelAndView.addObject("industry", industry);
+        modelAndView.addObject("tag", tag);
+        modelAndView.addObject("financing",financingVO);
+        modelAndView.addObject("region", region);
         modelAndView.setViewName("project-detail");
         //记录用户浏览数据
         ProjectScan scanRecord = new ProjectScan();
@@ -163,6 +197,7 @@ public class ApiController {
 
     @GetMapping("/applyBP")
     @ResponseBody
+    @CacheEvict(value = "bpApply", key = "#projectId")
     public Result applyBP(@RequestParam("projectId") Integer projectId) {
         Integer uid = (Integer) request.getSession().getAttribute(KEY_USER);
         //记录申请记录
@@ -170,6 +205,19 @@ public class ApiController {
         applyRecord.setUid(uid);
         applyRecord.setProjectId(projectId);
         bpApplyService.save(applyRecord);
+        return Result.success();
+    }
+
+
+    @GetMapping("/applyChat")
+    @ResponseBody
+    public Result applyChat(@RequestParam("projectId") Integer projectId) {
+        Integer uid = (Integer) request.getSession().getAttribute(KEY_USER);
+        //记录申请记录
+        ChatApply applyRecord = new ChatApply();
+        applyRecord.setUid(uid);
+        applyRecord.setProjectId(projectId);
+        chatApplyService.save(applyRecord);
         return Result.success();
     }
 
@@ -190,13 +238,21 @@ public class ApiController {
 
     @GetMapping("/getMonthMeetings")
     @ResponseBody
+    @Cacheable("monthMeeting")
     public List<Meeting> getMonthMeetings(@RequestParam("date") String dateStr) {
         Date date = DateUtil.parse(dateStr).toJdkDate();
         return meetingService.queryMonthMeetings(date);
     }
 
     @GetMapping("/scanBP")
-    public void scanBP(@RequestParam("pid") Integer pid) {
+    @ResponseBody
+    public void scanBP(@RequestParam("code") String code,@RequestParam("state") Integer pid) throws IOException {
+        checkUser(code);
+        Integer uid = (Integer) request.getSession().getAttribute(KEY_USER);
+        if (uid == null) {
+            response.sendRedirect("www.baidu.com");
+            return;
+        }
         Project project = projectService.getById(pid);
         String bpUrl = project.getBp();
         InputStream inputStream = null;

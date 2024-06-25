@@ -29,27 +29,27 @@
         </div>
         <div id="p4" class="weui-form-preview__item">
             <label class="weui-form-preview__label">行业赛道</label>
-            <span class="weui-form-preview__value">这是行业赛道</span>
+            <span class="weui-form-preview__value" th:text="${industry.getName()}">这是行业赛道</span>
         </div>
         <div id="p5" class="weui-form-preview__item">
             <label class="weui-form-preview__label">应用领域</label>
-            <span class="weui-form-preview__value">这是应用领域</span>
+            <span class="weui-form-preview__value" th:text="${project.getDomain()}"></span>
         </div>
         <div id="p6" class="weui-form-preview__item">
             <label class="weui-form-preview__label">融资轮次</label>
-            <span class="weui-form-preview__value">A轮</span>
+            <span class="weui-form-preview__value" th:text="${financing.getTurn()}"></span>
         </div>
         <div id="p7" class="weui-form-preview__item">
             <label class="weui-form-preview__label">现估值</label>
-            <span class="weui-form-preview__value">这是财务数据</span>
+            <span class="weui-form-preview__value" th:text="${financing.getValuation()}"></span>
         </div>
         <div id="p8" class="weui-form-preview__item">
             <label class="weui-form-preview__label">融资金额</label>
-            <span class="weui-form-preview__value">这是财务数据</span>
+            <span class="weui-form-preview__value" th:text="${financing.getAmount()}"></span>
         </div>
         <div id="p9" class="weui-form-preview__item">
-            <label class="weui-form-preview__label">所在区域</label>
-            <span class="weui-form-preview__value">北京市 朝阳区</span>
+            <label class="weui-form-preview__label">所在城市</label>
+            <span class="weui-form-preview__value" th:text="${region.getAreaName()}"></span>
         </div>
     </div>
     <div class="weui-form-preview__ft">
@@ -95,7 +95,7 @@
     }
 
     function changeChatDialog(flag) {
-        let element = document.getElementById('chatDialog');
+        let element = document.getElementById('ChatDialog');
         if (flag === 1) {
             element.setAttribute("style", "display:block");
         } else {

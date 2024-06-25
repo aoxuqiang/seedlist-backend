@@ -68,7 +68,7 @@ public class MeetingController extends BaseController<MeetingService> {
     }
 
     @PostMapping("/save")
-    @CacheEvict(value = {"meetingList","meetingDetail"})
+    @CacheEvict(value = {"meetingList","meetingDetail","monthMeeting"}, allEntries = true)
     public Result saveMeeting(@RequestBody Meeting meeting) {
         getService().save(meeting);
         return success();

@@ -4,6 +4,8 @@ import com.example.seedlist.controller.BaseController;
 import com.example.seedlist.dto.Result;
 import com.example.seedlist.entity.Industry;
 import com.example.seedlist.service.IndustryService;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -16,18 +18,21 @@ public class IndustryController extends BaseController<IndustryService> {
     }
 
     @GetMapping("/list")
+    @Cacheable("allIndustry")
     public Result listIndustry() {
         return success(getService().getAll());
     }
 
 
     @PostMapping("/save")
-    public Result saveProject(@RequestBody Industry industry) {
+    @CacheEvict(value = "allIndustry",allEntries = true)
+    public Result saveIndustry(@RequestBody Industry industry) {
         getService().save(industry);
         return success();
     }
 
     @PostMapping("/del")
+    @CacheEvict(value = "allIndustry",allEntries = true)
     public Result delTag(@RequestParam("id") Integer id) {
         getService().delById(id);
         return success();

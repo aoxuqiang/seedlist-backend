@@ -3,6 +3,8 @@ package com.example.seedlist.enums;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.util.Objects;
+
 @AllArgsConstructor
 @Getter
 public enum FinancingRound {
@@ -22,4 +24,14 @@ public enum FinancingRound {
     private final Integer code;
 
     private final String desc;
+
+
+    public static String getDesc(Integer code) {
+        for (FinancingRound value : FinancingRound.values()) {
+            if (Objects.equals(code, value.getCode())) {
+                return value.getDesc();
+            }
+        }
+        return null;
+    }
 }
