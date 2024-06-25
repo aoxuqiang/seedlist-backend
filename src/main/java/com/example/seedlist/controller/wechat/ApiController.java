@@ -5,6 +5,7 @@ import com.example.seedlist.entity.*;
 import com.example.seedlist.http.*;
 import com.example.seedlist.service.*;
 import lombok.extern.slf4j.Slf4j;
+import org.checkerframework.checker.units.qual.K;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +13,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -64,6 +66,11 @@ public class ApiController {
 
     private static final String KEY_USER = "UID";
 
+
+    private boolean haveUserInfo() {
+        return request.getSession().getAttribute(KEY_USER) != null;
+    }
+
     @RequestMapping("/projects")
     public ModelAndView projectList(@RequestParam("code") String code,
                                     @RequestParam(value = "state", required = false) String state) {
@@ -98,7 +105,13 @@ public class ApiController {
     }
 
     @RequestMapping("/projectMeeting")
-    public ModelAndView projectMeeting(@RequestParam("id") Integer meetingId) {
+    public ModelAndView projectMeeting(@RequestParam(value = "code",required = false) String code,
+                                       @RequestParam("state") Integer meetingId) throws IOException {
+        if (!haveUserInfo()) {
+            String redirectUrl = String.format("https://open.weixin.qq.com/connect/oauth2/authorize?appid=wwd4b9f5c2a07ccc61&redirect_uri=http://www.dealseedlist.com:8080/wx/projectMeeting&response_type=code&state=%d&scope=snsapi_base&agentid=1000011#wechat_redirect",meetingId);
+            response.sendRedirect("");
+            return null;
+        }
         Meeting meeting = meetingService.getById(meetingId);
         Project project = projectService.getById(meeting.getProjectId());
         ModelAndView modelAndView = new ModelAndView();
@@ -186,8 +199,7 @@ public class ApiController {
             }
             if (inputStream != null) {
                 byte[] buffer = new byte[1024];
-                int read = 0;
-                while ((read = inputStream.read(buffer)) != -1) {
+                while (inputStream.read(buffer) != -1) {
                     response.getOutputStream().write(buffer);
                     response.getOutputStream().flush();
                 }

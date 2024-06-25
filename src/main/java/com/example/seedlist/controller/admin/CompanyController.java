@@ -71,4 +71,10 @@ public class CompanyController extends BaseController<CompanyService> {
         financingService.save(financing);
         return success();
     }
+
+    @PostMapping("/financing/del")
+    public Result delFinancing(@RequestParam("id") int id) {
+        financingService.delById(id);
+        return success();
+    }
 }

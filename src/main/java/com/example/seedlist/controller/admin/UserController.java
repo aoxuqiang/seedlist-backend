@@ -21,7 +21,7 @@ public class UserController extends BaseController<UserService> {
         return success(getService().getAll());
     }
 
-    @PostMapping("/relation/org")
+    @PostMapping("/org")
     public Result relationOrg(@RequestParam("id") Integer id, @RequestParam("orgId") Integer orgId) {
         getService().updateOrgId(id, orgId);
         return success();

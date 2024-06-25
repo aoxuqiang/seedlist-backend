@@ -23,9 +23,9 @@ public class UserService extends BaseService<UserRepository, User,Integer> {
 
 
     public void updateOrgId(Integer id, Integer orgId) {
-        User user = getRepository().getOne(id);
+        User user = getById(id);
         user.setOrgId(orgId);
-        getRepository().save(user);
+        save(user);
     }
 }
 

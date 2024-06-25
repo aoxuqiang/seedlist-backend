@@ -42,4 +42,8 @@ public class MeetingService extends BaseService<MeetingRepository, Meeting, Inte
     public List<Meeting> queryMonthMeetings(Date date) {
         return getRepository().queryAllByStartTimeBetween(DateUtil.beginOfMonth(date), DateUtil.endOfMonth(date));
     }
+
+    public void saveMeetingInviteList(List<MeetingInvite> meetingInviteList) {
+        meetingInviteRepository.saveAll(meetingInviteList);
+    }
 }
