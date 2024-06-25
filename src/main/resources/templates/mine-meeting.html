@@ -10,18 +10,12 @@
 <body>
 
 <div class="weui-form-preview">
-    <div class="weui-cells">
-        <a aria-labelledby="js_cell_tl1_tips js_cell_tl1_link" class="weui-cell weui-cell_access" th:href="">
+    <div class="weui-cells" th:each="meeting:${meetings}">
+        <a aria-labelledby="js_cell_tl1_tips js_cell_tl1_link" class="weui-cell weui-cell_access" th:href="${meeting.getLink()}">
                 <span class="weui-cell__bd" id="js_cell_tl1_tips" aria-hidden="true">
-                    <span>会议1</span>
+                    <span th:text="${meeting.getName()}"></span>
                 </span>
-            <span class="weui-cell__ft" aria-hidden="true" id="js_cell_tl1_link">2024-04-24 12:00:00</span>
-        </a>
-        <a aria-labelledby="js_cell_tl2_tips js_cell_tl2_link" class="weui-cell  weui-cell_access" th:href="">
-                <span class="weui-cell__bd" aria-hidden="true" id="js_cell_tl2_tips">
-                    <span>cell standard</span>
-                </span>
-            <span class="weui-cell__ft" aria-hidden="true" id="js_cell_tl2_link">说明文字</span>
+            <span class="weui-cell__ft" aria-hidden="true" id="js_cell_tl1_link" th:text="${meeting.getStartTime()}"></span>
         </a>
     </div>
 </div>

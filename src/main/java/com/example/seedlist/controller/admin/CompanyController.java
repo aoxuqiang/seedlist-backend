@@ -4,8 +4,10 @@ import com.example.seedlist.controller.BaseController;
 import com.example.seedlist.converter.CompanyMapper;
 import com.example.seedlist.dto.CompanyDTO;
 import com.example.seedlist.dto.Result;
+import com.example.seedlist.entity.Financing;
 import com.example.seedlist.entity.Region;
 import com.example.seedlist.service.CompanyService;
+import com.example.seedlist.service.FinancingService;
 import com.example.seedlist.service.RegionService;
 import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +24,9 @@ import java.util.List;
 @RestController
 @RequestMapping("/company")
 public class CompanyController extends BaseController<CompanyService> {
+
+    @Autowired
+    private FinancingService financingService;
 
     public CompanyController(CompanyService service) {
         super(service);
@@ -52,6 +57,18 @@ public class CompanyController extends BaseController<CompanyService> {
     @PostMapping("/save")
     public Result save(@RequestBody CompanyDTO dto) {
         getService().save(CompanyMapper.MAPPER.toCompany(dto));
+        return success();
+    }
+
+    @GetMapping("/financing/list")
+    public Result getFinancingList(@RequestParam("companyId") Integer companyId) {
+        List<Financing> companyFinancing = financingService.getCompanyFinancing(companyId);
+        return success(companyFinancing);
+    }
+
+    @PostMapping("/financing/save")
+    public Result saveFinancing(@RequestBody Financing financing) {
+        financingService.save(financing);
         return success();
     }
 }

@@ -17,6 +17,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Controller
@@ -110,10 +111,14 @@ public class ApiController {
     }
 
     @RequestMapping("/mineMeeting")
-    public ModelAndView mineMeeting(@RequestParam("id") Integer meetingId) {
+    public ModelAndView mineMeeting() {
         Integer uid = (Integer) request.getSession().getAttribute(KEY_USER);
+        List<MeetingApply> meetingApplies = meetingApplyService.selectByUser(uid);
+        List<Meeting> meetingList = meetingService.findAllById(
+                meetingApplies.stream().map(MeetingApply::getMeetingId).collect(Collectors.toList()));
         ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName("project-meeting");
+        modelAndView.addObject("meetings", meetingList);
+        modelAndView.setViewName("mine-meeting");
         return modelAndView;
     }
 

@@ -4,10 +4,11 @@ import com.example.seedlist.controller.BaseController;
 import com.example.seedlist.converter.MeetingMapper;
 import com.example.seedlist.dto.MeetingDTO;
 import com.example.seedlist.dto.Result;
-import com.example.seedlist.entity.Meeting;
-import com.example.seedlist.entity.Project;
+import com.example.seedlist.dto.UserMeetingDTO;
+import com.example.seedlist.entity.*;
 import com.example.seedlist.service.MeetingService;
 import com.example.seedlist.service.ProjectService;
+import com.example.seedlist.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,6 +22,9 @@ public class MeetingController extends BaseController<MeetingService> {
 
     @Autowired
     private ProjectService projectService;
+    @Autowired
+    private UserService userService;
+
 
 
     protected MeetingController(MeetingService service) {
@@ -61,11 +65,21 @@ public class MeetingController extends BaseController<MeetingService> {
 
     @GetMapping("/apply/list")
     public Result applyList(@RequestParam("meetingId") Integer meetingId) {
-        return success(getService().queryMeetingApplyList(meetingId));
+        List<MeetingApply> meetingApplies = getService().queryMeetingApplyList(meetingId);
+        List<User> userList = userService.findAllById(meetingApplies.stream().map(MeetingApply::getUid).collect(Collectors.toList()));
+        Map<Integer,String> map = userList.stream().collect(Collectors.toMap(User::getId,User::getName));
+        List<UserMeetingDTO> result = MeetingMapper.MAPPER.toApplyList(meetingApplies);
+        result.forEach(t -> t.setUname(map.get(t.getUid())));
+        return success(result);
     }
 
     @GetMapping("/invite/list")
     public Result inviteList(@RequestParam("meetingId") Integer meetingId) {
-        return success(getService().queryMeetingInviteList(meetingId));
+        List<MeetingInvite> meetingInvites = getService().queryMeetingInviteList(meetingId);
+        List<User> userList = userService.findAllById(meetingInvites.stream().map(MeetingInvite::getUid).collect(Collectors.toList()));
+        Map<Integer,String> map = userList.stream().collect(Collectors.toMap(User::getId,User::getName));
+        List<UserMeetingDTO> result = MeetingMapper.MAPPER.toInviteList(meetingInvites);
+        result.forEach(t -> t.setUname(map.get(t.getUid())));
+        return success(result);
     }
 }

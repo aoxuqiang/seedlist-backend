@@ -20,5 +20,12 @@ public class UserService extends BaseService<UserRepository, User,Integer> {
     public List<User> queryByIds(List<Integer> ids) {
         return getRepository().queryAllByIdIn(ids);
     }
+
+
+    public void updateOrgId(Integer id, Integer orgId) {
+        User user = getRepository().getOne(id);
+        user.setOrgId(orgId);
+        getRepository().save(user);
+    }
 }
 

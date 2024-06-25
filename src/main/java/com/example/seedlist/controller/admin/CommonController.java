@@ -1,13 +1,11 @@
 package com.example.seedlist.controller.admin;
 
-import cn.hutool.json.JSON;
-import cn.hutool.json.JSONUtil;
 import com.example.seedlist.converter.BpMapper;
 import com.example.seedlist.dto.BpRecordDTO;
 import com.example.seedlist.dto.Result;
 import com.example.seedlist.entity.BpApply;
 import com.example.seedlist.entity.BpSend;
-import com.example.seedlist.entity.MeetingApply;
+import com.example.seedlist.entity.ProjectScan;
 import com.example.seedlist.entity.User;
 import com.example.seedlist.enums.FinancingRound;
 import com.example.seedlist.service.*;
@@ -63,7 +61,7 @@ public class CommonController {
         List<BpApply> bpApplyList = bpApplyService.queryByProject(projectId);
         List<User> userList = userService.findAllById(bpApplyList.stream().map(BpApply::getUid).collect(Collectors.toList()));
         Map<Integer,String> map = userList.stream().collect(Collectors.toMap(User::getId, User::getName));
-        List<BpRecordDTO> result = BpMapper.MAPPER.toDTOList(bpApplyList);
+        List<BpRecordDTO> result = BpMapper.MAPPER.toApplyList(bpApplyList);
         result.forEach(t-> t.setUname(map.get(t.getUid())));
         return Result.success(result);
     }
@@ -75,7 +73,12 @@ public class CommonController {
      */
     @GetMapping("/bpSend")
     public Result querySend(@RequestParam("projectId") Integer projectId) {
-        return  Result.success(bpSendService.queryByProject(projectId));
+        List<BpSend> bpSends = bpSendService.queryByProject(projectId);
+        List<User> userList = userService.findAllById(bpSends.stream().map(BpSend::getUid).collect(Collectors.toList()));
+        Map<Integer,String> map = userList.stream().collect(Collectors.toMap(User::getId, User::getName));
+        List<BpRecordDTO> result = BpMapper.MAPPER.toSendList(bpSends);
+        result.forEach(t-> t.setUname(map.get(t.getUid())));
+        return  Result.success(result);
     }
 
     /**
@@ -85,15 +88,11 @@ public class CommonController {
      */
     @GetMapping("/projectScan")
     public Result queryScan(@RequestParam("projectId") Integer projectId) {
-        return Result.success(projectScanService.queryByProject(projectId));
-    }
-
-    /**
-     * 会议报名记录
-     */
-    @GetMapping("/meetingApply")
-    public Result queryMeetingApply(@RequestParam("meetingId") Integer meetingId) {
-
-        return null;
+        List<ProjectScan> projectScans = projectScanService.queryByProject(projectId);
+        List<User> userList = userService.findAllById(projectScans.stream().map(ProjectScan::getUid).collect(Collectors.toList()));
+        Map<Integer,String> map = userList.stream().collect(Collectors.toMap(User::getId, User::getName));
+        List<BpRecordDTO> result = BpMapper.MAPPER.toScanList(projectScans);
+        result.forEach(t-> t.setUname(map.get(t.getUid())));
+        return Result.success(result);
     }
 }

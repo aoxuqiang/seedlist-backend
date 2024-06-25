@@ -2,17 +2,18 @@ package com.example.seedlist.controller.admin;
 
 import com.example.seedlist.controller.BaseController;
 import com.example.seedlist.dto.Result;
-import com.example.seedlist.service.UserService;
+import com.example.seedlist.entity.Org;
+import com.example.seedlist.service.OrgService;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-@RequestMapping("/user")
+@RequestMapping("/org")
 @RestController
-public class UserController extends BaseController<UserService> {
+public class OrgController extends BaseController<OrgService> {
 
-    protected UserController(UserService service) {
+    protected OrgController(OrgService service) {
         super(service);
     }
 
@@ -21,9 +22,8 @@ public class UserController extends BaseController<UserService> {
         return success(getService().getAll());
     }
 
-    @PostMapping("/relation/org")
-    public Result relationOrg(@RequestParam("id") Integer id, @RequestParam("orgId") Integer orgId) {
-        getService().updateOrgId(id, orgId);
-        return success();
+    @PostMapping("/save")
+    public Result save(@RequestBody Org org) {
+        return success(getService().save(org));
     }
 }

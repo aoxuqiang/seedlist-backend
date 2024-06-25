@@ -13,4 +13,8 @@ import javax.persistence.Table;
 public class Org extends BaseEntity {
 
     private String name;
+
+    private String desc;
+
+    private String homeLink;
 }

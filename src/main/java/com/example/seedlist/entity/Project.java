@@ -33,6 +33,10 @@ public class Project extends BaseEntity {
      */
     private String brief;
     /**
+     * 行业Id
+     */
+    private Integer industryId;
+    /**
      * 团队
      */
     private String team;

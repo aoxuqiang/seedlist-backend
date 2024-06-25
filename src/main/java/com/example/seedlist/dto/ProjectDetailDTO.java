@@ -22,6 +22,8 @@ public class ProjectDetailDTO implements Serializable {
 
     private String brief;
 
+    private Integer industryId;
+
     private String team;
 
     private String custom;
@@ -43,4 +45,6 @@ public class ProjectDetailDTO implements Serializable {
     private List<Tag> tagList;
 
     private Company company;
+
+    private Integer show;
 }

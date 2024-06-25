@@ -6,13 +6,12 @@ import java.io.Serializable;
 import java.util.Date;
 
 @Data
-public class BpRecordDTO implements Serializable {
-
-    private Integer projectId;
-
+public class UserMeetingDTO implements Serializable {
     private Integer uid;
 
     private String uname;
 
     private Date createdTime;
+
+    private Integer auditStatus;
 }

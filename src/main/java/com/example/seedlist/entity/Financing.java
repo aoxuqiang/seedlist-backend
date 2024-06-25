@@ -27,13 +27,5 @@ public class Financing extends BaseEntity {
     /**
      * 融资状态
      */
-    private Integer status;
-    /**
-     * 创建人
-     */
-    private String createdBy;
-    /**
-     * 最后更新人
-     */
-    private String updatedBy;
+    private Integer state;
 }
