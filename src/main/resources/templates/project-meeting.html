@@ -11,8 +11,8 @@
 
 <div class="weui-form-preview">
     <div role="option" class="weui-form-preview__hd">
-        <label class="weui-form-preview__label" th:text="${meeting.getName()}"></label>
-        <em class="weui-form-preview__value" th:text="${project.getNo()}"></em>
+        <label class="weui-form-preview__label">会议名称</label>
+        <em class="weui-form-preview__value" th:text="${meeting.getName()}"></em>
     </div>
     <div role="option" aria-labelledby="p4 js_a11y_comma p5 js_a11y_comma p6" class="weui-form-preview__bd">
         <div id="p0" class="weui-form-preview__item">
@@ -33,32 +33,33 @@
         </div>
         <div id="p4" class="weui-form-preview__item">
             <label class="weui-form-preview__label">行业赛道</label>
-            <span class="weui-form-preview__value">这是行业赛道</span>
+            <span class="weui-form-preview__value" th:text="${industry.getName()}"></span>
         </div>
         <div id="p5" class="weui-form-preview__item">
             <label class="weui-form-preview__label">应用领域</label>
-            <span class="weui-form-preview__value">这是应用领域</span>
+            <span class="weui-form-preview__value" th:text="${project.getDomain()}"></span>
         </div>
         <div id="p6" class="weui-form-preview__item">
             <label class="weui-form-preview__label">融资轮次</label>
-            <span class="weui-form-preview__value">A轮</span>
+            <span class="weui-form-preview__value" th:text="${financing.getTurn()}"></span>
         </div>
         <div id="p7" class="weui-form-preview__item">
             <label class="weui-form-preview__label">现估值</label>
-            <span class="weui-form-preview__value">这是财务数据</span>
+            <span class="weui-form-preview__value" th:text="${financing.getValuation()}"></span>
         </div>
         <div id="p8" class="weui-form-preview__item">
             <label class="weui-form-preview__label">融资金额</label>
-            <span class="weui-form-preview__value">这是财务数据</span>
+            <span class="weui-form-preview__value" th:text="${financing.getAmount()}"></span>
         </div>
         <div id="p9" class="weui-form-preview__item">
             <label class="weui-form-preview__label">所在区域</label>
-            <span class="weui-form-preview__value">北京市 朝阳区</span>
+            <span class="weui-form-preview__value" th:text="${region.getAreaName()}"></span>
         </div>
     </div>
     <div class="weui-form-preview__ft">
         <a role="button" class="weui-form-preview__btn weui-form-preview__btn_primary"
-           th:href="'javascript:applyMeeting(' + |${meeting.getId()}| +')'" th:text="${showText}" disabled></a>
+           th:href="'javascript:applyMeeting(' + |${meeting.getId()}| +')'" th:text="${showText}"
+           th:disabled="${disabled}"></a>
     </div>
 </div>
 

@@ -146,16 +146,41 @@ public class ApiController {
     @RequestMapping("/projectMeeting")
     public ModelAndView projectMeeting(@RequestParam(value = "code",required = false) String code,
                                        @RequestParam("state") Integer meetingId) {
-        if (StrUtil.isNotBlank(code)) {
+        if (CharSequenceUtil.isNotBlank(code)) {
             checkUser(code);
         }
+        Integer uid = (Integer) request.getSession().getAttribute(KEY_USER);
         Meeting meeting = meetingService.getById(meetingId);
+        //查询项目信息
         Project project = projectService.getById(meeting.getProjectId());
+        //公司信息
+        Company company = companyService.getById(project.getCompanyId());
+        //行业信息
+        Industry industry = industryService.getById(project.getIndustryId());
+        //标签信息
+        List<Integer> tagIds = Arrays.stream(project.getTags().split(","))
+                .map(Integer::valueOf).collect(Collectors.toList());
+        List<Tag> tagList = tagService.findAllById(tagIds);
+        List<Financing> companyFinancing = financingService.getCompanyFinancing(project.getCompanyId());
+        companyFinancing = companyFinancing.stream().filter(t -> t.getState() == 0)
+                .sorted(Comparator.comparing(Financing::getTurn)).collect(Collectors.toList());
+        Financing current = companyFinancing.get(companyFinancing.size() - 1);
+        FinancingVO financingVO = new FinancingVO(current);
+        String tag = tagList.stream().map(Tag::getName).collect(Collectors.joining("、"));
+        Region region = regionService.getRoot(company.getAreaId());
+
+        MeetingApply meetingApply = meetingApplyService.selectUserMeeting(meetingId,uid);
+        boolean flag = meetingApply != null;
+
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.addObject("meeting", meeting);
         modelAndView.addObject("project", project);
-        modelAndView.addObject("disabled", true);
-        modelAndView.addObject("showText", "报名");
+        modelAndView.addObject("industry", industry);
+        modelAndView.addObject("tag", tag);
+        modelAndView.addObject("financing",financingVO);
+        modelAndView.addObject("region", region);
+        modelAndView.addObject("disabled", !flag);
+        modelAndView.addObject("showText", flag ? "已报名" : "报名");
         modelAndView.setViewName("project-meeting");
         return modelAndView;
     }
