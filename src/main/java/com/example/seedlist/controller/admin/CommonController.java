@@ -6,6 +6,7 @@ import com.example.seedlist.dto.BpRecordDTO;
 import com.example.seedlist.dto.Result;
 import com.example.seedlist.entity.BpApply;
 import com.example.seedlist.entity.BpSend;
+import com.example.seedlist.entity.Financing;
 import com.example.seedlist.entity.ProjectScan;
 import com.example.seedlist.entity.User;
 import com.example.seedlist.enums.FinancingRound;
@@ -40,6 +41,9 @@ public class CommonController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private FinancingService financingService;
+
     @GetMapping("/getRounds")
     public Result getRounds() {
         FinancingRound[] values = FinancingRound.values();
@@ -51,6 +55,13 @@ public class CommonController {
             result.add(map);
         }
         return Result.success(result);
+    }
+
+    @GetMapping("/getMoney")
+    public Result getMoney() {
+        int sum = financingService.getAll().stream().filter(t -> t.getState() == 0)
+                .mapToInt(Financing::getAmount).sum();
+        return Result.success(sum);
     }
 
     /**

@@ -93,14 +93,14 @@ public class ProjectController extends BaseController<ProjectService> {
 
 
     @PostMapping("/del")
-    @CacheEvict(value ={"listProject","projectDetail"})
+    @CacheEvict(value ={"listProject","projectDetail"},allEntries = true)
     public Result saveProject(@RequestParam("id") Integer id) {
         getService().delById(id);
         return success();
     }
 
     @PostMapping("/updateShow")
-    @CacheEvict(value ={"listProject","projectDetail"})
+    @CacheEvict(value ={"listProject","projectDetail"}, allEntries = true)
     public Result updateShow(@RequestParam("id") Integer id,
                              @RequestParam("show") Integer show) {
         Project project = getService().getById(id);
@@ -128,6 +128,7 @@ public class ProjectController extends BaseController<ProjectService> {
 
     @GetMapping("/sendBP2Users")
     @ResponseBody
+    @CacheEvict(value = "bpSend", key = "#projectId")
     public Result sendBP(@RequestParam("projectId") Integer projectId,
                          @RequestParam("uids") String uidStr) {
         Project project = getService().getById(projectId);
@@ -136,7 +137,7 @@ public class ProjectController extends BaseController<ProjectService> {
         List<String> wxUserIdList = investorList.stream().map(User::getWxUserId).collect(Collectors.toList());
 
         String url = String.format("https://open.weixin.qq.com/connect/oauth2/authorize?appid=wwd4b9f5c2a07ccc61&redirect_uri=http://www.dealseedlist.com:8080/wx/scanBP&response_type=code&scope=snsapi_base&state=%s&agentid=1000011#wechat_redirect",project.getId());
-        String content = String.format("这是项目【%s】的BP </br></br> <a href='%s'>请查收</a>", project.getName(), url);
+        String content = String.format("这是项目【%s】的BP \r\n\r\n <a href='%s'>请查收</a>", project.getName(), url);
         wechatService.sendMessage(wxUserIdList, content);
         //记录发送BP记录
         List<BpSend> bpSendList = Lists.newArrayList();
@@ -149,9 +150,4 @@ public class ProjectController extends BaseController<ProjectService> {
         bpSendService.saveAll(bpSendList);
         return Result.success();
     }
-
-
-
-
-
 }

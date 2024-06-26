@@ -70,4 +70,9 @@ public class Project extends BaseEntity {
 
     @Column(name = "`show`")
     private Integer show;
+
+    /**
+     * 备注
+     */
+    private String remark;
 }

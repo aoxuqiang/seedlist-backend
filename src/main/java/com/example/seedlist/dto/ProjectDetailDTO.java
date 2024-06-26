@@ -38,13 +38,9 @@ public class ProjectDetailDTO implements Serializable {
 
     private String remark;
 
-    private String createdBy;
-
-    private String updatedBy;
-
     private List<Tag> tagList;
 
     private Company company;
 
-    private Integer show;
+    private Integer show = 0;
 }

@@ -32,6 +32,7 @@ public class MeetingController extends BaseController<MeetingService> {
     private UserService userService;
     @Autowired
     private WechatService wechatService;
+    @Autowired
     private MeetingApplyService meetingApplyService;
 
 
@@ -90,7 +91,7 @@ public class MeetingController extends BaseController<MeetingService> {
         getService().saveMeetingInviteList(meetingInvites);
         List<String> wxUsers = userList.stream().map(User::getWxUserId).collect(Collectors.toList());
         String redirectUrl = String.format("https://open.weixin.qq.com/connect/oauth2/authorize?appid=wwd4b9f5c2a07ccc61&redirect_uri=http://www.dealseedlist.com:8080/wx/projectMeeting&response_type=code&state=%d&scope=snsapi_base&agentid=1000011#wechat_redirect", meetingId);
-        String content = String.format("【SeedList】向您发送了一个会议邀请，请查收</br> <a href='%s'>【%s】</a>",
+        String content = String.format("【SeedList】向您发送了一个会议邀请，请查收 \r\n\r\n  <a href='%s'>【%s】</a>",
                 redirectUrl, meeting.getName());
         wechatService.sendMessage(wxUsers, content);
         return success();

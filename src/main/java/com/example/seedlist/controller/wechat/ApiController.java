@@ -99,7 +99,7 @@ public class ApiController {
                                     @RequestParam(value = "state", required = false) String state) {
         checkUser(code);
         //查询项目信息
-        List<Project> projectList = projectService.getAll();
+        List<Project> projectList = projectService.getAll().stream().filter(t -> t.getShow() > 0).collect(Collectors.toList());
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.addObject("projects", projectList);
         modelAndView.setViewName("project-list");
